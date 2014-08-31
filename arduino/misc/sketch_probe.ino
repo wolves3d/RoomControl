@@ -1,21 +1,5 @@
 #include <OneWire.h>
 
-void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(9600);
-}
-/*
-void loop() {
-  // put your main code here, to run repeatedly:
-  Serial.println(millis(), HEX);
-  delay(15);
-}*/
-/*
-#include "Arduino.h"
-//#include "wiring.h"
-//#include <Platform.h>
-#include <OneWire.h>
-*/
 // OneWire DS18S20, DS18B20, DS1822 Temperature Example
 //
 // http://www.pjrc.com/teensy/td_libs_OneWire.html
@@ -110,19 +94,26 @@ public:
 OneWire  ds(PIN_ONE_WIRE);
 
 //PinWatchDog  pinWatchDog;
-unsigned long time;
-/*
+unsigned long alarmTime;
+
+int relayPins[4];
+
 void setup(void)
 {
+  relayPins[0] = 2;
+    relayPins[1] = 4;
+      relayPins[2] = 7;
+        relayPins[3] = 8;
+        
   	Serial.begin(9600);
-  
-//	time = micros() + 500;
+        randomSeed(0);
+        alarmTime = millis() + 500;
 //        Serial.print("Alarm = ");
 //        Serial.println(time);	
 
 //        OneWireEnum();
 }
-
+/*
 int main()
 {
 	setup();
@@ -220,25 +211,48 @@ bool OneWireEnum()
 }
 
 
-
+int curRelay = 0;
+int mode = LOW;
 
 void loop()
 {
 //	pinWatchDog.OnUpdate();
 
-  unsigned long currentTime = micros();
-  Serial.print("Cur time = ");
-  Serial.println(currentTime);	
-
-return;
+  unsigned long currentTime = millis();
   
-  if (currentTime > time)
+  if (currentTime > alarmTime)
   {
     Serial.write("bump ");
-    int relayPin = 8;
-    time = (currentTime + 500);
+    alarmTime = (currentTime + 500);
     
-    if (0 == random(0, 1))
+   int relayPin = relayPins[ curRelay ];
+    pinMode(relayPin, OUTPUT);
+    digitalWrite(relayPin, mode);    
+    /*
+  if (LOW == mode)
+  {
+    mode = HIGH;
+  }
+  else
+  {*/
+
+        
+       ++curRelay;
+      if (curRelay > 3)
+      {
+        curRelay = 0;
+        
+              mode = (LOW == mode)
+        ? HIGH
+        : LOW;
+      }
+     
+//  }
+ 
+   
+    /*
+   
+    if (0 == random(2))
     {
       digitalWrite(relayPin, HIGH);
        Serial.println("hi");
@@ -247,9 +261,9 @@ return;
     {
       digitalWrite(relayPin, LOW);
              Serial.println("low");
-    }
+    }*/
   }
-
+  return;
 
 
   byte i;
@@ -263,7 +277,7 @@ return;
     Serial.println("No more addresses.");
     Serial.println();
     ds.reset_search();
-//    delay(1250);
+    delay(750);
     return;
   }
   
