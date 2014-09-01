@@ -6,9 +6,23 @@
 #include <errno.h>   /* Error number definitions */
 #include <termios.h> /* POSIX terminal control definitions */
 
+
+CSerialPort::CSerialPort()
+	: m_file(-1)
+{
+
+}
+
+
+bool IsPortValid(int port)
+{
+	return (-1 != port);
+}
+
+
 bool CSerialPort::Open(const char * port)
 {
-	if (NULL != port)
+	if (false == IsPortValid(m_file))
 	{
 		m_file = open(port, O_RDWR | O_NOCTTY | O_NDELAY);
 
@@ -39,10 +53,10 @@ bool CSerialPort::Open(const char * port)
 
 void CSerialPort::Close()
 {
-	if (NULL != m_file)
+	if (true == IsPortValid(port))
 	{
 		close(m_file);
-		m_file = NULL;
+		m_file = -1;
 	}
 }
 
@@ -55,7 +69,7 @@ uint CSerialPort::Send(void * data, uint byteCount)
 
 uint CSerialPort::Recv(void * buffer, uint maxByteCount)
 {
-	if (NULL != m_file)
+	if (true == IsPortValid(port))
 	{
 		return read(m_file, buffer, maxByteCount);
 	}
