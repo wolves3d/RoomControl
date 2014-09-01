@@ -40,14 +40,12 @@ typedef unsigned char byte;
 extern "C" void __cxa_pure_virtual() {;}
 
 void setup(void);
-void OneWireRead(byte * buffer, const byte * addr, byte count);
-void OnCommand(uint16_t cmdID);
-bool OneWireEnum();
 //
 
 #include "C:\Soft\arduino-1.5.5-r2\hardware\arduino\avr\cores\arduino\arduino.h"
 #include "C:\Soft\arduino-1.5.5-r2\hardware\arduino\avr\variants\eightanaloginputs\pins_arduino.h" 
-#include "C:\adt-bundle-windows\workspace\Arduino\homeControl\homeControl.ino"
-#include "C:\Dev\RoomControl\common\include\netCommand.h"
-#include "C:\adt-bundle-windows\workspace\Arduino\homeControl\pinWatchDog.h"
+#include "C:\Dev\RoomControl\arduino\source\homeControl.ino"
+#include "C:\Dev\RoomControl\arduino\source\OneWireWrapper.h"
+#include "C:\Dev\RoomControl\arduino\source\netCommand.h"
+#include "C:\Dev\RoomControl\arduino\source\pinWatchDog.h"
 #endif

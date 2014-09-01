@@ -15,17 +15,17 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="homeControl.ino" />
+    <None Include="source\homeControl.ino" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Visual Micro\.homeControl.vsarduino.h">
+    <ClInclude Include="source\pinWatchDog.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Visual Micro\.source.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="pinWatchDog.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="netCommand.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="Visual Micro\.homeControl.vsarduino.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

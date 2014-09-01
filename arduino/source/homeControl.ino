@@ -5,18 +5,106 @@
 // Includes
 #include <Arduino.h>
 #include "netCommand.h"
-#include "pinWatchDog.h"
 #include <OneWire.h>
+#include "OneWireWrapper.h"
+#include "pinWatchDog.h"
 
 // Singletons
-OneWire ds(ONE_WIRE_SIGNAL_PIN);
 PinWatchDog pinWatchDog;
+OneWireWrapper oneWire(ONE_WIRE_SIGNAL_PIN);
 
 Alarm everySecondAlarm(1000);
 unsigned long loopCounter = 0;
 
 Alarm relayAlarm(100);
 int relayPins[4];
+int curRelay = 0;
+int mode = LOW;
+
+// =============================================================================
+
+class CommandManager
+{
+	#define MAX_PACK_SIZE 12
+	byte m_buffer[MAX_PACK_SIZE];
+
+	byte GetArgData(byte * buffer, byte count)
+	{
+		if (Serial.available() >= count)
+		{
+			while (count--)
+			{
+				(*buffer) = Serial.read();
+				buffer++;
+			}
+
+			return count;
+		}
+		
+		return 0;
+	}
+
+	bool OneWireReadTempData()
+	{
+		byte resBuffer[(OW_ADDR_LEN + MAX_BYTE_COUNT)];
+
+		// hack objects
+		OneWireAddr * blob = (OneWireAddr *)resBuffer;
+		byte * sensorData = resBuffer + OW_ADDR_LEN;
+
+		if (OW_ADDR_LEN != GetArgData(blob->Address(), OW_ADDR_LEN))
+			return false;
+
+		if (false == oneWire.ReadTemperatureData(sensorData, *blob, MAX_BYTE_COUNT))
+			return false;
+
+		SerialCommand::Send(RSP_OW_TEMP_SENSOR_DATA, resBuffer, (OW_ADDR_LEN + MAX_BYTE_COUNT));
+		return true;
+	}
+
+	void OnCommand(uint16_t cmdID)
+	{
+		bool succeedFlag = false;
+	
+		switch (cmdID)
+		{
+			case CMD_REQUEST_ONE_WIRE_ENUM:	succeedFlag = oneWire.Enumerate();	break;
+		}
+
+		if (false == succeedFlag)
+		{
+			SerialCommand::Send(RSP_INVALID_REQUEST, (byte *)&cmdID, 2);
+		}
+	}
+
+public:
+
+	void OnLoop()
+	{
+		byte bufferSize = Serial.available();
+
+		if (0 == bufferSize)
+			return;
+
+		if (bufferSize > 1)
+		{
+			byte cmd[2];
+			cmd[0] = Serial.read();
+			cmd[1] = Serial.read();
+			OnCommand( *((uint16_t*)(&cmd)) );
+		}
+		else
+		{
+			// Error one byte not expected!!!
+		}
+	}
+};
+
+
+CommandManager commandManager;
+
+// =============================================================================
+
 
 void setup(void)
 {
@@ -38,76 +126,17 @@ void setup(void)
 	relayPins[1] = 4;
 	relayPins[2] = 7;
 	relayPins[3] = 8;
+
+	oneWire.Enumerate();
 }
 
-//void OnCommand(byt
-/*
-void OneWireWrite(byte * addr, byte value, byte power)
-{
-}
-*/
-void OneWireRead(byte * buffer, const byte * addr, byte count)
-{
-//	byte present = ds.reset();
-//	ds.select(addr);
-
-	for (byte i = 0; i < count; ++i)
-	{
-		buffer[i] = ds.read();
-	}
-}
-
-
-void OnCommand(uint16_t cmdID)
-{
-	bool succeedFlag = false;
-	
-	switch (cmdID)
-	{
-		case CMD_REQUEST_ONE_WIRE_ENUM:	succeedFlag = OneWireEnum();	break;
-	}
-
-	if (false == succeedFlag)
-	{
-		SerialCommand::Send(CMD_INVALID_REQUEST, (byte *)&cmdID, 2);
-	}
-}
-
-
-bool OneWireEnum()
-{
-	byte addr[8];
-	ds.reset_search();
-	//delay(250);
-
-	//Serial.print("1-Wire enum begin");
-	SerialCommand::Send(CMD_ONE_WIRE_ENUM_BEGIN, 0, 0);
-
-	while (ds.search(addr))
-	{
-		SerialCommand::Send(CMD_ONE_WIRE_ROM_FOUND, addr, 8);
-/*
-		Serial.print("found: ");
-
-		for (byte i = 0; i < 8; i++)
-		{
-			Serial.write(' ');
-			Serial.print(addr[i], HEX);
-		}
-*/
-	}
-
-//	Serial.print("1-Wire enum end");
-        SerialCommand::Send(CMD_ONE_WIRE_ENUM_END, 0, 0);
-	return true;
-}
-
-
-int curRelay = 0;
-int mode = LOW;
+// =============================================================================
 
 void loop()
 {
+	commandManager.OnLoop();
+
+	/*
 	++loopCounter;
 
 	if (true == everySecondAlarm.CheckAlarm())
@@ -119,7 +148,7 @@ void loop()
 	}
 
 	// --
-
+	/*
 	pinWatchDog.OnUpdate();
 
 	if (true == relayAlarm.CheckAlarm())
@@ -141,112 +170,70 @@ void loop()
      
 
   return;
+  */
 
+	OneWireAddr ow_blob;
+	if (false == oneWire.GetNextAddr(&ow_blob))
+	{
+		//Serial.println("searchDone!");
+	}
+	else
+	{			
+		// Check ROM CRC
+		if (false == ow_blob.CheckCRC())
+		{
+			Serial.println("CRC is not valid!");
+		}
+		else
+		{
+			byte data[12];
+			oneWire.ReadTemperatureData(data, ow_blob, 12);
+			
+			// Convert the data to actual temperature
+			// because the result is a 16 bit signed integer, it should
+			// be stored to an "int16_t" type, which is always 16 bits
+			// even when compiled on a 32 bit processor.
+			int16_t raw = (data[1] << 8) | data[0];
 
-  byte i;
-  byte present = 0;
-  byte type_s;
-  byte data[12];
-  byte addr[8];
-  float celsius, fahrenheit;
-  
-  if ( !ds.search(addr)) {
-    Serial.println("No more addresses.");
-    Serial.println();
-    ds.reset_search();
-    delay(750);
-    return;
-  }
-  
-  Serial.print("ROM =");
-  for( i = 0; i < 8; i++) {
-    Serial.write(' ');
-    Serial.print(addr[i], HEX);
-  }
+			switch (ow_blob.GetChipID())
+			{
+				case ECID_DS1822:
+				case ECID_DS18B20:
+				{
+					byte cfg = (data[4] & 0x60);
+					// at lower res, the low bits are undefined, so let's zero them
+					if (cfg == 0x00) raw = raw & ~7;  // 9 bit resolution, 93.75 ms
+					else if (cfg == 0x20) raw = raw & ~3; // 10 bit res, 187.5 ms
+					else if (cfg == 0x40) raw = raw & ~1; // 11 bit res, 375 ms
+					//// default is 12 bit resolution, 750 ms conversion time
+				}
+				break;
 
-  if (OneWire::crc8(addr, 7) != addr[7]) {
-      Serial.println("CRC is not valid!");
-      return;
-  }
-  Serial.println();
- 
-  // the first ROM byte indicates which chip
-  switch (addr[0]) {
-    case 0x10:
-      Serial.println("  Chip = DS18S20");  // or old DS1820
-      type_s = 1;
-      break;
-    case 0x28:
-      Serial.println("  Chip = DS18B20");
-      type_s = 0;
-      break;
-    case 0x22:
-      Serial.println("  Chip = DS1822");
-      type_s = 0;
-      break;
-    default:
-      Serial.println("Device is not a DS18x20 family device.");
-      return;
-  } 
+				case ECID_DS18S20:
+				{
+					raw = raw << 3; // 9 bit resolution default
+					if (data[7] == 0x10)
+					{
+						// "count remain" gives full 12 bit resolution
+						raw = (raw & 0xFFF0) + 12 - data[6];
+					}
+				}
+				break;
 
-      Serial.println("A");
+				default:
+					Serial.print("UNKNOWN CHIP ID!");
+				return;
+			}
 
-  ds.reset();
-  ds.select(addr);
-  ds.write(0x44, 1);        // start conversion, with parasite power on at the end
+			float celsius = (float)raw / 16.f;
+			Serial.print("Temperature = ");
+			Serial.print(celsius);
+			Serial.print(" Celsius, ");
 
-      Serial.println("B");
-  
-//  delay(750);     // maybe 750ms is enough, maybe not
-        Serial.println("C");
-        
-        
-  // we might do a ds.depower() here, but the reset will take care of it.
-  present = ds.reset();
-  ds.select(addr);    
-  ds.write(0xBE);         // Read Scratchpad
-
-  Serial.print("  Data = ");
-  Serial.print(present, HEX);
-  Serial.print(" ");
-  
-//  OneWireRead(data, addr, 9);
-  
-  
-  for ( i = 0; i < 9; i++) {           // we need 9 bytes
-    data[i] = ds.read();
-    Serial.print(data[i], HEX);
-    Serial.print(" ");
-  }
-  
-  Serial.print(" CRC=");
-  Serial.print(OneWire::crc8(data, 8), HEX);
-  Serial.println();
-
-  // Convert the data to actual temperature
-  // because the result is a 16 bit signed integer, it should
-  // be stored to an "int16_t" type, which is always 16 bits
-  // even when compiled on a 32 bit processor.
-  int16_t raw = (data[1] << 8) | data[0];
-  if (type_s) {
-    raw = raw << 3; // 9 bit resolution default
-    if (data[7] == 0x10) {
-      // "count remain" gives full 12 bit resolution
-      raw = (raw & 0xFFF0) + 12 - data[6];
-    }
-  } else {
-    byte cfg = (data[4] & 0x60);
-    // at lower res, the low bits are undefined, so let's zero them
-    if (cfg == 0x00) raw = raw & ~7;  // 9 bit resolution, 93.75 ms
-    else if (cfg == 0x20) raw = raw & ~3; // 10 bit res, 187.5 ms
-    else if (cfg == 0x40) raw = raw & ~1; // 11 bit res, 375 ms
-    //// default is 12 bit resolution, 750 ms conversion time
-  }
-  celsius = (float)raw / 16.0;
-  fahrenheit = celsius * 1.8 + 32.0;
-  Serial.print("  Temperature = ");
-  Serial.print(celsius);
-  Serial.print(" Celsius, ");
-  Serial.print(fahrenheit);
-  Serial.println(" Fahrenheit");
+// 				float fahrenheit = 32 + (1.8 * celsius);
+// 				Serial.print(fahrenheit);
+// 				Serial.println(" Fahrenheit");
+			Serial.println();
+		}
+	}
 } 
