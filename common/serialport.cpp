@@ -53,7 +53,7 @@ bool CSerialPort::Open(const char * port)
 
 void CSerialPort::Close()
 {
-	if (true == IsPortValid(port))
+	if (true == IsPortValid(m_file))
 	{
 		close(m_file);
 		m_file = -1;
@@ -69,7 +69,7 @@ uint CSerialPort::Send(void * data, uint byteCount)
 
 uint CSerialPort::Recv(void * buffer, uint maxByteCount)
 {
-	if (true == IsPortValid(port))
+	if (true == IsPortValid(m_file))
 	{
 		return read(m_file, buffer, maxByteCount);
 	}
