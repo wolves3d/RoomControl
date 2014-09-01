@@ -46,7 +46,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Dev\RoomControl\common\include;C:\Soft\arduino-1.5.5-r2\hardware\arduino\avr\cores\arduino;C:\Soft\arduino-1.5.5-r2\hardware\arduino\avr\variants\eightanaloginputs;C:\Soft\arduino-1.5.5-r2\libraries\OneWire;C:\Soft\arduino-1.5.5-r2\libraries\OneWire\utility;C:\Soft\arduino-1.5.5-r2\libraries;C:\Soft\arduino-1.5.5-r2\hardware\arduino\avr\libraries;C:\Program Files (x86)\Visual Micro\Visual Micro for Arduino\Micro Platforms\default\debuggers;C:\adt-bundle-windows\workspace\Arduino\libraries;c:\soft\arduino-1.5.5-r2\hardware\tools\avr\avr\include\;c:\soft\arduino-1.5.5-r2\hardware\tools\avr\avr\include\avr\;c:\soft\arduino-1.5.5-r2\hardware\tools\avr\avr\;c:\soft\arduino-1.5.5-r2\hardware\tools\avr\lib\gcc\avr\4.3.2\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Soft\arduino-1.5.5-r2\hardware\arduino\avr\cores\arduino;C:\Soft\arduino-1.5.5-r2\hardware\arduino\avr\variants\eightanaloginputs;C:\Soft\arduino-1.5.5-r2\libraries\OneWire;C:\Soft\arduino-1.5.5-r2\libraries\OneWire\utility;C:\Soft\arduino-1.5.5-r2\libraries;C:\Soft\arduino-1.5.5-r2\hardware\arduino\avr\libraries;C:\Program Files (x86)\Visual Micro\Visual Micro for Arduino\Micro Platforms\default\debuggers;C:\adt-bundle-windows\workspace\Arduino\libraries;c:\soft\arduino-1.5.5-r2\hardware\tools\avr\avr\include\;c:\soft\arduino-1.5.5-r2\hardware\tools\avr\avr\include\avr\;c:\soft\arduino-1.5.5-r2\hardware\tools\avr\avr\;c:\soft\arduino-1.5.5-r2\hardware\tools\avr\lib\gcc\avr\4.3.2\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>C:\Dev\RoomControl\arduino\Visual Micro\.source.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <IgnoreStandardIncludePath>true</IgnoreStandardIncludePath>
       <PreprocessorDefinitions>__AVR_ATmega328p__;__AVR_ATmega328P__;ARDUINO=155;ARDUINO_MAIN;__AVR__;__avr__;F_CPU=16000000L;__cplusplus;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -75,6 +75,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\netCommand.h" />
+    <ClInclude Include="source\OneWireWrapper.h" />
     <ClInclude Include="source\pinWatchDog.h">
       <FileType>CppCode</FileType>
     </ClInclude>
