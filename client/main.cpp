@@ -2,9 +2,6 @@
 #include "serialport.h"
 
 
-#define ARDUINO_PORT "/dev/ttyUSB0"
-
-
 int main()
 {
 	const int exitBytes = 4096;
@@ -31,7 +28,7 @@ int main()
 				}
 			}
 
-			usleep(10000);
+			sleep(1000);
 		}
 
 		comPort.Close();
