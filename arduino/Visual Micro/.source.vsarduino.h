@@ -39,8 +39,8 @@
 typedef unsigned char byte;
 extern "C" void __cxa_pure_virtual() {;}
 
-void setup(void);
 //
+void setup(void);
 
 #include "C:\Soft\arduino-1.5.5-r2\hardware\arduino\avr\cores\arduino\arduino.h"
 #include "C:\Soft\arduino-1.5.5-r2\hardware\arduino\avr\variants\eightanaloginputs\pins_arduino.h" 

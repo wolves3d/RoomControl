@@ -10,3 +10,6 @@
 /project/win.sdf
 /project/win.opensdf
 /arduino/Debug
+/common/proj.win32/*.sdf
+/common/proj.win32/*.suo
+/arduino/*.opensdf

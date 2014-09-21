@@ -11,10 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\client\CommandManager.h" />
     <ClInclude Include="..\..\client\pch.h" />
     <ClInclude Include="..\..\common\serialport.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\client\CommandManager.cpp" />
     <ClCompile Include="..\..\client\main.cpp" />
     <ClCompile Include="..\..\client\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
