@@ -4,7 +4,7 @@ public:
 	CSerialPort();
 	bool Open(const char * portName);
 	void Close();
-	uint Send(void * data, uint byteCount);
+	uint Send(const void * data, uint byteCount);
 	uint Recv(void * buffer, uint maxByteCount);
 
 private:

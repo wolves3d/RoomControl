@@ -47,7 +47,14 @@ bool CSerialPort::Open(const char * portName)
 
 			if (0 != GetCommState(m_port, &m_config))
 			{
-				
+				//Define serial connection parameters for the arduino board
+				m_config.BaudRate	= CBR_9600;
+ 				m_config.ByteSize	= 8;
+ 				m_config.StopBits	= ONESTOPBIT;
+ 				m_config.Parity		= NOPARITY;
+			
+				// Set current configuration of serial communication port.
+				SetCommState(m_port, &m_config);
 				return true;
 			}
 		}
@@ -73,7 +80,8 @@ bool CSerialPort::Open(const char * portName)
 
 			lpDisplayBuf = (LPVOID)LocalAlloc(LMEM_ZEROINIT, 
 				(lstrlen((LPCTSTR)lpMsgBuf) + lstrlen((LPCTSTR)lpszFunction) + 40) * sizeof(TCHAR)); 
-			StringCchPrintf((LPTSTR)lpDisplayBuf, 
+
+			sprintf_s((LPTSTR)lpDisplayBuf, 
 				LocalSize(lpDisplayBuf) / sizeof(TCHAR),
 				TEXT("%s failed with error %d: %s"), 
 				lpszFunction, dw, lpMsgBuf); 
@@ -110,8 +118,22 @@ void CSerialPort::Close()
 }
 
 
-uint CSerialPort::Send(void * data, uint byteCount)
+uint CSerialPort::Send(const void * data, uint byteCount)
 {
+	if (INVALID_HANDLE_VALUE != m_port)
+	{
+		DWORD writtenBytes;
+		if (0 != WriteFile(m_port, data, byteCount, &writtenBytes, NULL))
+		{
+			// succeed
+			return writtenBytes;
+		}
+	}
+	else
+	{
+		// error invalid op!
+	}
+
 	return 0;
 }
 
