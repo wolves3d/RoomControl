@@ -5,9 +5,21 @@ class Alarm
 	int m_delay;
 
 public:
+
+	Alarm()
+	{
+		Reset();
+	}
+
 	Alarm(int delay)
 	{
+		Reset();
 		Schedule(delay);
+	}
+
+	void Reset()
+	{
+		m_deadLine = 0;
 	}
 
 	void Schedule(int delay, int timeCorrection = 0)

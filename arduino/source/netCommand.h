@@ -1,24 +1,31 @@
 enum ECommandID
 {
-	CMD_PIN_WRITE,
-	CMD_PIN_READ,
+	CMD_NOP = 0,
+	CMD_PIN_WRITE = 1,
+	CMD_PIN_READ = 2,
 
-	CMD_PIN_WATCH,		// Отслеживать изменение значения pin
-	CMD_PIN_STOP_WATCH,	// Прекратить отслеживать значения pin
-	RSP_ON_PIN_CHANGED,	// Ответ при определении изменения
+	CMD_PIN_WATCH = 3,		// Отслеживать изменение значения pin
+	CMD_PIN_STOP_WATCH = 4,	// Прекратить отслеживать значения pin
+	RSP_ON_PIN_CHANGED = 5,	// Ответ при определении изменения
 
-	CMD_REQUEST_ONE_WIRE_ENUM,
-	RSP_ONE_WIRE_ENUM_BEGIN,
-	RSP_ONE_WIRE_ROM_FOUND,
-	RSP_ONE_WIRE_ENUM_END,
+	CMD_REQUEST_ONE_WIRE_ENUM = 6,
+	RSP_ONE_WIRE_ENUM_BEGIN = 7,
+	RSP_ONE_WIRE_ROM_FOUND = 8,
+	RSP_ONE_WIRE_ENUM_END = 9,
 
-	CMD_OW_READ_TEMP_SENSOR_DATA,
-	RSP_OW_TEMP_SENSOR_DATA,
+	CMD_OW_READ_TEMP_SENSOR_DATA = 10,
+	RSP_OW_TEMP_SENSOR_DATA = 11,
 
-	RSP_INVALID_REQUEST,
+	RSP_PING = 12,
+	RSP_INVALID_REQUEST = 13,
+	RSP_INVALID_CMD = 14,
 };
 
 #define CMD_SIZE_IN_BYTES 2
+
+// -----------------------------------------------------------------------------
+
+#ifndef CLIENT_IMPL
 
 class SerialCommand
 {
@@ -34,3 +41,5 @@ public:
 		}
 	}
 };
+
+#endif // #ifndef CLIENT_IMPL

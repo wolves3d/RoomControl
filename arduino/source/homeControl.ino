@@ -13,7 +13,6 @@
 PinWatchDog pinWatchDog;
 OneWireWrapper oneWire(ONE_WIRE_SIGNAL_PIN);
 
-Alarm everySecondAlarm(1000);
 unsigned long loopCounter = 0;
 
 Alarm relayAlarm(100);
@@ -25,50 +24,97 @@ int mode = LOW;
 
 class CommandManager
 {
-	#define MAX_PACK_SIZE 12
+	#define MAX_PACK_SIZE 16
 	byte m_buffer[MAX_PACK_SIZE];
+	byte m_writeOffset;
+	byte m_readOffset;
+	byte m_size;
+	byte m_targetSize;
 
-	byte GetArgData(byte * buffer, byte count)
+	byte m_cmdID;
+	bool m_waitingForData;
+
+
+public:
+	CommandManager()
+		: m_writeOffset(0)
+		, m_readOffset(0)
+		, m_size(0)
+		, m_targetSize(2)
+		, m_waitingForData(true)
 	{
-		if (Serial.available() >= count)
+	}
+
+	/*
+	bool GetArgData(byte * buffer, byte count)
+	{
+		//while (true)
 		{
-			while (count--)
-			{
-				(*buffer) = Serial.read();
-				buffer++;
+			//byte a = Serial.available();
+			//Serial.print(a);
+			//Serial.print(a);
+
+			if ((m_bufferSize - m_bufferOffset) >= count)
+			{	
+				while (count--)
+				{
+					(*buffer) = m_buffer[m_bufferOffset];
+					m_bufferOffset++;
+					buffer++;
+				}
+
+				// success
+				return true;
 			}
 
-			return count;
+
+
+
 		}
-		
-		return 0;
+
+		return false;
 	}
+	*/
 
 	bool OneWireReadTempData()
 	{
-		byte resBuffer[(OW_ADDR_LEN + MAX_BYTE_COUNT)];
+		const byte buffSize = OneWireAddr::ADDR_LEN + OneWireAddr::DATA_LEN;
+		byte resBuffer[buffSize];
+		memset(resBuffer, 0, buffSize);
+
+
+// 		if (false == WaitForData(resBuffer, OneWireAddr::ADDR_LEN))
+// 			return false;
 
 		// hack objects
-		OneWireAddr * blob = (OneWireAddr *)resBuffer;
-		byte * sensorData = resBuffer + OW_ADDR_LEN;
+		//OneWireAddr * blob = (OneWireAddr *)resBuffer;
+		byte * sensorData = resBuffer + OneWireAddr::ADDR_LEN;
 
-		if (OW_ADDR_LEN != GetArgData(blob->Address(), OW_ADDR_LEN))
+		for (byte i = 0; i < OneWireAddr::ADDR_LEN; ++i)
+		{
+			resBuffer[i] = PopByte();
+		}
+
+		if (false == oneWire.ReadTemperatureData(sensorData, resBuffer, OneWireAddr::DATA_LEN))
 			return false;
 
-		if (false == oneWire.ReadTemperatureData(sensorData, *blob, MAX_BYTE_COUNT))
-			return false;
-
-		SerialCommand::Send(RSP_OW_TEMP_SENSOR_DATA, resBuffer, (OW_ADDR_LEN + MAX_BYTE_COUNT));
+		SerialCommand::Send(RSP_OW_TEMP_SENSOR_DATA, resBuffer, (OneWireAddr::ADDR_LEN + OneWireAddr::DATA_LEN));
 		return true;
 	}
 
-	void OnCommand(uint16_t cmdID)
+
+	void OnCommand(byte cmdID)
 	{
 		bool succeedFlag = false;
-	
+		
 		switch (cmdID)
 		{
-			case CMD_REQUEST_ONE_WIRE_ENUM:	succeedFlag = oneWire.Enumerate();	break;
+			case CMD_REQUEST_ONE_WIRE_ENUM: succeedFlag = oneWire.Enumerate(); break;
+			case CMD_OW_READ_TEMP_SENSOR_DATA: succeedFlag = OneWireReadTempData(); break;
+
+			default:
+				SerialCommand::Send(RSP_INVALID_CMD, (byte *)&cmdID, 2);
+				return;
 		}
 
 		if (false == succeedFlag)
@@ -77,25 +123,74 @@ class CommandManager
 		}
 	}
 
-public:
+	byte ByteCount()
+	{
+		return m_size;
+	}
+
+	void PushByte(byte value)
+	{
+		m_buffer[m_size] = value;
+		++m_size;
+	}
+
+	byte PopByte()
+	{
+		byte result = 0xFF;
+
+		if (m_size > 0)
+		{	
+			result = m_buffer[0];
+			--m_size;
+
+			// move rest
+			for (byte i = 0; i < m_size; ++i)
+			{
+				m_buffer[i] = m_buffer[i+1];
+			}
+		}
+
+
+		return result;
+	}
+
+
 
 	void OnLoop()
 	{
-		byte bufferSize = Serial.available();
-
-		if (0 == bufferSize)
-			return;
-
-		if (bufferSize > 1)
+		if (true == Serial.available())
 		{
-			byte cmd[2];
-			cmd[0] = Serial.read();
-			cmd[1] = Serial.read();
-			OnCommand( *((uint16_t*)(&cmd)) );
+			PushByte( Serial.read() );
 		}
-		else
+		
+		if (ByteCount() >= m_targetSize)
 		{
-			// Error one byte not expected!!!
+			if (true == m_waitingForData)
+			{
+				// command recieved
+				m_cmdID = PopByte();
+
+				// command argument size
+				m_targetSize = PopByte();
+				m_waitingForData = false;
+			}
+			else
+			{
+				// ready to call command
+				OnCommand(m_cmdID);
+
+				// prepare for next
+				m_waitingForData = true;
+				m_targetSize = 2;
+			}
+		}
+
+		// ------
+		
+		if (true == oneWire.IsEnumerating())
+		{
+			OneWireAddr ow_blob;
+			oneWire.GetNextAddr(&ow_blob);
 		}
 	}
 };
@@ -106,35 +201,82 @@ CommandManager commandManager;
 // =============================================================================
 
 
-void setup(void)
+class StateBlink
 {
-	Serial.begin(9600);
-	randomSeed(0);
+	Alarm m_secondAlarm;
+	Alarm m_ledOffAlarm;
+	int	m_blinkDelay;
+	int m_workTime;
 
-	pinWatchDog.SleepTime(20); // 1000/20 = 50 analog-reads per second
-	/*
-	pinWatchDog.WatchFor(0);
-	pinWatchDog.WatchFor(1);
-	pinWatchDog.WatchFor(2);
-	pinWatchDog.WatchFor(3);
-	pinWatchDog.WatchFor(4);
-	pinWatchDog.WatchFor(5);
-	pinWatchDog.WatchFor(6);
-	*/
+public:
 
-	relayPins[0] = 2;
-	relayPins[1] = 4;
-	relayPins[2] = 7;
-	relayPins[3] = 8;
+	enum EState
+	{
+		ES_FAIL = 0,
+		ES_OK,
+	};
 
-	oneWire.Enumerate();
-}
+	StateBlink()
+		: m_blinkDelay(100)
+		, m_workTime(0)
+	{
+		m_secondAlarm.Schedule(1000);
+	}
+
+	void SetState(EState state)
+	{
+		switch (state)
+		{
+			case StateBlink::ES_FAIL:
+				m_blinkDelay = 900;
+			break;
+
+			case StateBlink::ES_OK:
+				m_blinkDelay = 100;
+			break;
+
+			default:
+				m_blinkDelay = 100;
+		}
+	}
+
+	void OnUpdate()
+	{
+		// Pin 13 has an LED connected on most Arduino boards.
+		#define STATE_LED 13
+
+		if (true == m_ledOffAlarm.CheckAlarm())
+		{
+			pinMode(STATE_LED, OUTPUT);
+			digitalWrite(STATE_LED, LOW);
+			m_ledOffAlarm.Reset();
+		}
+
+		if (true == m_secondAlarm.CheckAlarm())
+		{
+			m_workTime++;
+			SerialCommand::Send(RSP_PING, (byte *)&m_workTime, 2);
+
+
+			pinMode(STATE_LED, OUTPUT);
+			digitalWrite(STATE_LED, HIGH);
+
+			m_ledOffAlarm.Schedule(m_blinkDelay);
+		}
+	}
+};
+
+
+StateBlink stateBlink;
 
 // =============================================================================
 
 void loop()
 {
+	stateBlink.OnUpdate();
 	commandManager.OnLoop();
+
+
 
 	/*
 	++loopCounter;
@@ -168,14 +310,16 @@ void loop()
       }
 	}
      
+	 */
 
   return;
-  */
+ 
 
 	OneWireAddr ow_blob;
 	if (false == oneWire.GetNextAddr(&ow_blob))
 	{
 		//Serial.println("searchDone!");
+		oneWire.Enumerate();
 	}
 	else
 	{			
@@ -187,7 +331,7 @@ void loop()
 		else
 		{
 			byte data[12];
-			oneWire.ReadTemperatureData(data, ow_blob, 12);
+			oneWire.ReadTemperatureData(data, ow_blob.Address(), 12);
 			
 			// Convert the data to actual temperature
 			// because the result is a 16 bit signed integer, it should
@@ -237,3 +381,31 @@ void loop()
 		}
 	}
 } 
+
+
+
+void setup(void)
+{
+	stateBlink.SetState( StateBlink::ES_OK );
+
+	Serial.begin(9600);
+	randomSeed(0);
+
+	pinWatchDog.SleepTime(20); // 1000/20 = 50 analog-reads per second
+	/*
+	pinWatchDog.WatchFor(0);
+	pinWatchDog.WatchFor(1);
+	pinWatchDog.WatchFor(2);
+	pinWatchDog.WatchFor(3);
+	pinWatchDog.WatchFor(4);
+	pinWatchDog.WatchFor(5);
+	pinWatchDog.WatchFor(6);
+	*/
+
+	relayPins[0] = 2;
+	relayPins[1] = 4;
+	relayPins[2] = 7;
+	relayPins[3] = 8;
+
+	//oneWire.Enumerate();
+}

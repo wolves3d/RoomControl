@@ -7,27 +7,30 @@ enum EOneWireChipID
 
 struct OneWireAddr
 {
-#define OW_ADDR_LEN 8
-	byte addr[OW_ADDR_LEN];
+	enum
+	{
+		ADDR_LEN = 8,
+		DATA_LEN = 9,
+	};
+//#define OW_ADDR_LEN 8
+	byte addr[ADDR_LEN];
 
 	OneWireAddr()
 	{
-		Set(NULL);
+		memset(addr, 0x0, ADDR_LEN);
 	}
 
-	void Set(OneWireAddr * other)
+	OneWireAddr(byte * other_addr)
 	{
-		if (NULL == other)
-		{
-			memset(addr, 0x0, OW_ADDR_LEN);
-		}
-		else
-		{
-			memcpy(addr, other->Address(), OW_ADDR_LEN);
-		}
+		Set(other_addr);
 	}
 
-	uint8_t * Address()
+	void Set(byte * other_addr)
+	{
+		memcpy(addr, other_addr, ADDR_LEN);
+	}
+
+	byte * Address()
 	{
 		return addr;
 	}
@@ -37,24 +40,29 @@ struct OneWireAddr
 		return addr[0];
 	}
 
+#ifndef CLIENT_IMPL
+
 	bool CheckCRC()
 	{
 		// last byte is CRC sum of first 7
 		return (OneWire::crc8(addr, 7) == addr[7]);
 	}
 
+#endif // #ifndef CLIENT_IMPL
+
 	bool IsEqual(const OneWireAddr & other)
 	{
+		/*
 		for (byte i = 0; i < OW_ADDR_LEN; ++i)
 		{
 			if (addr[i] != other.addr[i])
 				return false;
 		}
 
-		return true;
-		//return (0 == memcmp(addr, other.addr, OW_ADDR_LEN));
+		return true;*/
+		return (0 == memcmp(addr, other.addr, ADDR_LEN));
 	}
-
+	/*
 	void DebugPrintAddress()
 	{
 		for (byte i = 0; i < OW_ADDR_LEN; ++i)
@@ -62,9 +70,10 @@ struct OneWireAddr
 			Serial.print(addr[i], HEX);
 			Serial.write(' ');
 		}
-	}
+	}*/
 };
 
+#ifndef CLIENT_IMPL
 
 class OneWireWrapper : public OneWire
 {
@@ -74,7 +83,7 @@ private:
 	OneWireAddr m_selectedBlob;
 
 public:
-	OneWireWrapper(uint8_t pin)
+	OneWireWrapper(byte pin)
 		: OneWire(pin)
 		, m_enumMode(false)
 		, m_blobCount(0)
@@ -92,6 +101,10 @@ public:
 		return true;
 	}
 
+	bool IsEnumerating()
+	{
+		return m_enumMode;
+	}
 
 	bool GetNextAddr(OneWireAddr * outBlob)
 	{
@@ -125,7 +138,7 @@ public:
 		{
 			reset();
 			select(m_selectedBlob.Address());
-			m_selectedBlob.Set(&blob);
+			m_selectedBlob.Set(blob.Address());
 		}
 
 		return true;
@@ -146,13 +159,13 @@ public:
 		return false;
 	}
 
-	#define MAX_BYTE_COUNT 9
-	bool ReadTemperatureData(byte * buffer, OneWireAddr & blob, byte maxSize = MAX_BYTE_COUNT)
+	
+	bool ReadTemperatureData(byte * buffer, byte * addr, byte maxSize = OneWireAddr::DATA_LEN)
 	{
-		if (maxSize >= MAX_BYTE_COUNT)
+		if (maxSize >= OneWireAddr::DATA_LEN)
 		{
 			reset();
-			select(blob.Address());
+			select(addr);
 			write(0x44, 1); // start conversion, with parasite power on at the end
 			//  delay(750);     // maybe 750ms is enough, maybe not
 
@@ -160,11 +173,17 @@ public:
 			//ds.depower();
 
 			byte present = reset();
-			select(blob.Address());
+			select(addr);
 			write(0xBE);
 
 			memset(buffer, 0, maxSize);
-			read_bytes(buffer, MAX_BYTE_COUNT);
+			read_bytes(buffer, OneWireAddr::DATA_LEN);
+
+			return true;
 		}
+
+		return false;
 	}
 };
+
+#endif // #ifndef CLIENT_IMPL
