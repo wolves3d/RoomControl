@@ -1,11 +1,13 @@
 #ifndef __pch_h_included__
 #define __pch_h_included__
 
+#define CLIENT_IMPL
+
 #ifdef WIN32
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <strsafe.h>
+//#include <strsafe.h>
 
 // It should be mentioned that if you try to access COM ports > 9 with CreateFile,
 // you'll always get ERROR_FILE_NOT_FOUND, even if the port exists.
@@ -26,8 +28,12 @@
 #include <stdio.h>   /* Standard input/output definitions */
 #include <string.h>  /* String function definitions */
 
+#include <vector>
+using namespace std;
+
 
 typedef unsigned int uint;
+typedef unsigned char byte;
 
 
 #endif // #ifndef __pch_h_included__
