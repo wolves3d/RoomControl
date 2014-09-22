@@ -2,6 +2,9 @@
 #include "CommandManager.h"
 
 
+void LogDB(const char * sensorID, float sensorT);
+
+
 CommandManager * g_commMgr = NULL;
 
 
@@ -114,7 +117,7 @@ void CommandManager::Update()
 
 			printf("RSP: 1wire rom found addr ");
 			for (uint i = 0; i < OneWireAddr::ADDR_LEN; ++i)
-				printf("%X ", addr[i]);
+				printf("%02X ", addr[i]);
 			printf("\n");
 
 			m_owDeviceList.push_back( OneWireAddr(addr) );
@@ -143,18 +146,18 @@ void CommandManager::Update()
 
 			printf("RSP: sensor data id:");
 			for (uint i = 0; i < OneWireAddr::ADDR_LEN; ++i)
-				printf("%X ", dstBuffer[i]);
+				printf("%02X ", dstBuffer[i]);
 
 			printf("data: ");
 			for (uint i = 0; i < OneWireAddr::DATA_LEN; ++i)
-				printf("%X ", dstBuffer[OneWireAddr::ADDR_LEN + i]);
+				printf("%02X ", dstBuffer[OneWireAddr::ADDR_LEN + i]);
 
 			int raw = (data[1] << 8) | data[0];
 
 			switch (addr->GetChipID())
 			{
-			case ECID_DS1822:
-			case ECID_DS18B20:
+				case ECID_DS1822:
+				case ECID_DS18B20:
 				{
 					byte cfg = (data[4] & 0x60);
 					// at lower res, the low bits are undefined, so let's zero them
@@ -165,7 +168,7 @@ void CommandManager::Update()
 				}
 				break;
 
-			case ECID_DS18S20:
+				case ECID_DS18S20:
 				{
 					raw = raw << 3; // 9 bit resolution default
 					if (data[7] == 0x10)
@@ -176,12 +179,15 @@ void CommandManager::Update()
 				}
 				break;
 
-			default:
-				printf("UNKNOWN CHIP ID!");
+				default:
+					printf("UNKNOWN CHIP ID!");
 			}
 
 			float celsius = (float)raw / 16.f;
 			printf("Temperature = %02.02fC / %02.02fF\n", celsius, (32 + (1.8f * celsius)));
+
+			const string sensorID( addr->ToString() );
+			LogDB(sensorID.c_str(), celsius);
 		}
 		break;
 
@@ -193,7 +199,7 @@ void CommandManager::Update()
 		{
 			uint workTime = 0;
 			g_commMgr->GetMoreData(&workTime, 2);
-			printf("ping: work time %d sec\n", workTime);
+			//printf("ping: work time %d sec\n", workTime);
 		}
 		break;
 
