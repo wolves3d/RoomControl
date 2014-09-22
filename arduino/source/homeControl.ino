@@ -45,36 +45,16 @@ public:
 	{
 	}
 
-	/*
-	bool GetArgData(byte * buffer, byte count)
+	bool PinWrite()
 	{
-		//while (true)
-		{
-			//byte a = Serial.available();
-			//Serial.print(a);
-			//Serial.print(a);
+		byte pinID = PopByte();
+		byte pinValue = PopByte();
 
-			if ((m_bufferSize - m_bufferOffset) >= count)
-			{	
-				while (count--)
-				{
-					(*buffer) = m_buffer[m_bufferOffset];
-					m_bufferOffset++;
-					buffer++;
-				}
+		pinMode(pinID, OUTPUT);
+		digitalWrite(pinID, pinValue);
 
-				// success
-				return true;
-			}
-
-
-
-
-		}
-
-		return false;
+		return true;
 	}
-	*/
 
 	bool OneWireReadTempData()
 	{
@@ -109,6 +89,7 @@ public:
 		
 		switch (cmdID)
 		{
+			case CMD_PIN_WRITE: succeedFlag = PinWrite(); break;
 			case CMD_REQUEST_ONE_WIRE_ENUM: succeedFlag = oneWire.Enumerate(); break;
 			case CMD_OW_READ_TEMP_SENSOR_DATA: succeedFlag = OneWireReadTempData(); break;
 
@@ -408,4 +389,4 @@ void setup(void)
 	relayPins[3] = 8;
 
 	//oneWire.Enumerate();
-}
+}`
