@@ -3,14 +3,16 @@ OBJ_DIR=obj
 
 SOURCES=pch.cpp \
 main.cpp \
+CommandManager.cpp \
 ../common/serialport.cpp
 
-INCLUDES=-I./ -I../common
+INCLUDES=-I./ -I../common -I../thirdparty/curl/include
 EXECUTABLE=hello
 
 CC=g++
 CFLAGS=-c -Wall
 LDFLAGS=
+LDLIBS=-L../thirdparty/curl/ubuntu/ -lcurl
 
 # auto ------------------------------------------------------------------------
 
@@ -36,7 +38,7 @@ clean:
 
 # link	
 $(EXECUTABLE): $(OBJECTS) 
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+	$(CC) $(LDFLAGS) $(OBJECTS) -o $@ $(LDLIBS)
 
 # compilation
 $(OBJ_DIR)/%.o : %.cpp

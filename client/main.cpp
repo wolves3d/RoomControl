@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CommandManager.h"
 
+#define CURL_STATICLIB
 #include <curl/curl.h>
 #include <curl/easy.h>
 
@@ -123,10 +124,11 @@ int main()
 	}
 
 	printf("Opened %s\n", ARDUINO_PORT);
-	sleep(2000); // time to init microcontroller
+	usleep(2000 * 1000); // time to init microcontroller
 	CommandManager commMgr(&comPort);
 
-	uint logDelay = 1000 * 60 * 30;
+//	uint logDelay = 1000 * 60 * 30;
+	uint logDelay = 5;
 	uint deadline = 0;
 
 	// -------------------------------------------------------------------------
@@ -137,7 +139,7 @@ int main()
 	while (true)
 	{
 		commMgr.Update();
-		sleep(100);
+		usleep(100 * 1000);
 
 		if (false == readFlag)
 		{
@@ -153,7 +155,7 @@ int main()
 
 		if (true == readFlag)
 		{
-			const uint currentTime =  GetTickCount();
+			const uint currentTime = time(NULL);
 			if (currentTime >= deadline)
 			{
 				deadline = (currentTime + logDelay);

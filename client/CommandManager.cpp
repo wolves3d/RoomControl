@@ -208,7 +208,7 @@ void CommandManager::Update()
 		break;
 
 	default:
-		printf("DEFAULT: %s (%d bytes)\n", (char *)&cmdID, readBytes);
+		printf("DEFAULT: %02x (%d bytes)\n", cmdID, readBytes);
 		break;
 	}
 

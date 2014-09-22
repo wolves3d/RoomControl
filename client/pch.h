@@ -25,9 +25,11 @@
 #endif
 
 
-#include <stdio.h>   /* Standard input/output definitions */
-#include <string.h>  /* String function definitions */
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
 
+#include <string>  /* String function definitions */
 #include <vector>
 using namespace std;
 
