@@ -12,6 +12,12 @@ CSerialPort::CSerialPort()
 }
 
 
+bool CSerialPort::IsValid()
+{
+	return (INVALID_HANDLE_VALUE != m_port);
+}
+
+
 bool CSerialPort::Open(const char * portName)
 {
 	if (NULL != portName)
@@ -25,26 +31,9 @@ bool CSerialPort::Open(const char * portName)
 			0 /*FILE_FLAG_OVERLAPPED*/,				// default.
 			NULL);
 
-		//m_file = open(port, O_RDWR | O_NOCTTY | O_NDELAY);
-
 		if (INVALID_HANDLE_VALUE != m_port)
 		{
-			//fcntl(m_file, F_SETFL, FNDELAY);
-
 			// Get the current options for the port...
-
-// 			struct termios options;
-// 			tcgetattr(m_file, &options);
-// 
-// 			cfsetispeed(&options, B9600);
-// 			cfsetospeed(&options, B9600);
-// 
-// 			//  Enable the receiver and set local mode...
-// 			options.c_cflag |= (CLOCAL | CREAD);
-// 
-// 			// Set the new options for the port...
-// 			tcsetattr(m_file, TCSANOW, &options);
-
 			if (0 != GetCommState(m_port, &m_config))
 			{
 				//Define serial connection parameters for the arduino board
@@ -103,13 +92,14 @@ void CSerialPort::Close()
 		if (0 != CloseHandle(m_port))
 		{
 			// succeed
-			m_port = INVALID_HANDLE_VALUE;
 			return;
 		}
 		else
 		{
 			// error closing port!
 		}
+
+		m_port = INVALID_HANDLE_VALUE;
 	}
 	else
 	{
