@@ -40,7 +40,23 @@ struct OneWireAddr
 		return addr[0];
 	}
 
-#ifndef CLIENT_IMPL
+#ifdef CLIENT_IMPL
+
+	string ToString()
+	{
+		char buf[128];
+		char * p = buf;
+
+		for (uint i = 0; i < ADDR_LEN; ++i)
+		{
+			sprintf(p, "%02X", addr[i]);
+			p += 2;
+		}
+
+		return string(buf);
+	}
+
+#else
 
 	bool CheckCRC()
 	{
@@ -48,7 +64,7 @@ struct OneWireAddr
 		return (OneWire::crc8(addr, 7) == addr[7]);
 	}
 
-#endif // #ifndef CLIENT_IMPL
+#endif // ##ifdef #else CLIENT_IMPL
 
 	bool IsEqual(const OneWireAddr & other)
 	{
