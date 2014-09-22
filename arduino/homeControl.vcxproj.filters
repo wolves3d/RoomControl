@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="source\homeControl.ino" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="source\pinWatchDog.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -33,5 +30,8 @@
     <ClInclude Include="source\netCommand.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="source\homeControl.ino" />
   </ItemGroup>
 </Project>
