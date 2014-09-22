@@ -124,7 +124,7 @@ int main()
 	}
 
 	printf("Opened %s\n", ARDUINO_PORT);
-	usleep(2000 * 1000); // time to init microcontroller
+	System::SleepMS(2000); // time to init microcontroller
 	CommandManager commMgr(&comPort);
 
 //	uint logDelay = 1000 * 60 * 30;
@@ -139,7 +139,7 @@ int main()
 	while (true)
 	{
 		commMgr.Update();
-		usleep(100 * 1000);
+		System::SleepMS(100);
 
 		if (false == readFlag)
 		{
