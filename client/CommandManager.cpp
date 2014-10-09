@@ -108,7 +108,7 @@ void CommandManager::Update()
 {
 	if (false == CheckPort())
 	{
-		// port prolem
+		// port problem
 		System::SleepMS(1000);
 		return;
 	}
