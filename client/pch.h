@@ -15,6 +15,8 @@
 // Link: support.microsoft.com/kb/115831
 #define ARDUINO_PORT "\\\\.\\COM18"
 
+#define sleep Sleep
+
 #else
 
 #include <unistd.h>
@@ -35,9 +37,5 @@ using namespace std;
 typedef unsigned int uint;
 typedef unsigned char byte;
 
-struct System
-{
-	static void SleepMS(uint ms);
-};
 
 #endif // #ifndef __pch_h_included__

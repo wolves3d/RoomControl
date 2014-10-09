@@ -14,9 +14,9 @@ CSerialPort::CSerialPort()
 }
 
 
-bool CSerialPort::IsValid()
+bool IsPortValid(int port)
 {
-	return (-1 != m_file);
+	return (-1 != port);
 }
 
 
