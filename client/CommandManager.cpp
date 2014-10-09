@@ -8,28 +8,12 @@ void LogDB(const char * sensorID, float sensorT);
 CommandManager * g_commMgr = NULL;
 
 
-CommandManager::CommandManager(const char * portName) 
-	: m_portName(portName)
+CommandManager::CommandManager(CSerialPort * port)
+	: m_port(port)
 	, m_waitForAnswerMode(false)
 	, m_isOneWireEnumerated(false)
 {
 	g_commMgr = this;
-	Update();
-}
-
-
-bool CommandManager::CheckPort()
-{
-	if (false == m_port.IsValid())
-	{
-		if (false == m_port.Open(m_portName.c_str()))
-		{
-			printf("Failed to open %s\n", ARDUINO_PORT);
-			return false;
-		}
-	}
-
-	return true;
 }
 
 
@@ -57,34 +41,36 @@ bool CommandManager::TrySendCommand()
 	const uint packetSize = command.GetSize();
 	bool result = false;
 
-	int bytesWritten = m_port.Send(&command, packetSize);
-	
-	if (-1 == bytesWritten)
+	if (packetSize == m_port->Send(&command, packetSize))
 	{
-		printf("Port write failed to write %d bytes, closing port\n", packetSize);
-		m_port.Close();
-	}
-	else if (packetSize == bytesWritten)
-	{
+		// 			// write args (if any)
+		// 			byte * srcBuffer = (byte *)data;
+		// 			while (byteCount--)
+		// 			{
+		// 				m_port->Send(srcBuffer, 1);
+		// 				++srcBuffer;
+		// 			}
+
 		result = true;
-	}
-	else
-	{
-		printf("Failed to write %d bytes, only %d written\n", packetSize, bytesWritten);
 	}
 
 	if (true == result)
 	{
-		m_commandList.erase( m_commandList.begin() );
+		printf("SendCommand (id: %d) succeed\n", command.cmd);
 	}
-	
+	else
+	{
+		printf("SendCommand (id: %d) failed\n", command.cmd);
+	}
+
+		m_commandList.erase( m_commandList.begin() );
 	return result;
 }
 
 
 bool CommandManager::GetMoreData(void * buffer, uint byteCount)
 {
-	const uint readBytes = m_port.Recv(buffer, byteCount);
+	const uint readBytes = m_port->Recv(buffer, byteCount);
 	return true;
 }
 
@@ -119,7 +105,7 @@ void CommandManager::Update()
 	}
 
 	ECommandID cmdID = CMD_NOP;
-	const uint readBytes = m_port.Recv(&cmdID, 2);
+	const uint readBytes = m_port->Recv(&cmdID, 2);
 	if (0 == readBytes)
 		return;
 
@@ -134,7 +120,7 @@ void CommandManager::Update()
 		{
 
 			byte addr[8];
-			uint r = m_port.Recv(addr, 8);
+			uint r = m_port->Recv(addr, 8);
 
 			printf("RSP: 1wire rom found addr ");
 			for (uint i = 0; i < OneWireAddr::ADDR_LEN; ++i)

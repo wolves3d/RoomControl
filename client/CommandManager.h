@@ -24,19 +24,17 @@ class CommandManager
 	};
 
 	vector <Command> m_commandList;
-	CSerialPort m_port;
-	string m_portName;
+	CSerialPort * m_port;
 	bool m_waitForAnswerMode;
 
 	vector <OneWireAddr> m_owDeviceList;
 	bool m_isOneWireEnumerated;
 
-	bool CheckPort();
 	bool TrySendCommand();
 	bool GetMoreData(void * buffer, uint byteCount);
 
 public:
-	CommandManager(const char * portName);
+	CommandManager(CSerialPort * port);
 	void PushCommand(ECommandID cmd, void * data = NULL, uint byteCount = 0);
 	void Update();
 
