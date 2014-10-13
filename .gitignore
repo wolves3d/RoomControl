@@ -14,3 +14,4 @@
 /common/proj.win32/*.suo
 /arduino/*.opensdf
 *.o
+/arduino/ipch/client-c3f55ed5/*.ipch
