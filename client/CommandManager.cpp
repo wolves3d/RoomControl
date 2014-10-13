@@ -63,7 +63,7 @@ bool CommandManager::TrySendCommand()
 		printf("SendCommand (id: %d) failed\n", command.cmd);
 	}
 
-	m_commandList.erase( m_commandList.begin() );
+		m_commandList.erase( m_commandList.begin() );
 	return result;
 }
 
@@ -92,6 +92,13 @@ const OneWireAddr & CommandManager::GetOneWireDeviceID(uint device)
 
 void CommandManager::Update()
 {
+	if (false == CheckPort())
+	{
+		// port problem
+		System::SleepMS(1000);
+		return;
+	}
+
 	if (false == m_waitForAnswerMode)
 	{
 		m_waitForAnswerMode = TrySendCommand();
