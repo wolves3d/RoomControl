@@ -1,5 +1,5 @@
-#include "../arduino/source/netCommand.h"
-#include "../arduino/source/OneWireWrapper.h"
+#include "../arduino/src/netCommand.h"
+#include "../arduino/src/OneWireWrapper.h"
 #include "serialport.h"
 
 // Forward declarations

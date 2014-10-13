@@ -92,10 +92,10 @@ const OneWireAddr & CommandManager::GetOneWireDeviceID(uint device)
 
 void CommandManager::Update()
 {
-	if (false == CheckPort())
+//	if (false == CheckPort())
 	{
 		// port problem
-		System::SleepMS(1000);
+//		System::SleepMS(1000);
 		return;
 	}
 
