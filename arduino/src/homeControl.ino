@@ -1,7 +1,3 @@
-// Config
-#define ANALOG_PIN_COUNT 8
-#define ONE_WIRE_SIGNAL_PIN 10 // (a 4.7K resistor is necessary)
-
 // Includes
 #include <Arduino.h>
 #include "netCommand.h"
