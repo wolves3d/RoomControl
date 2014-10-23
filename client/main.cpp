@@ -116,20 +116,12 @@ void OnEnumerationDone()
 
 int main()
 {
-	CSerialPort comPort;
-	if (false == comPort.Open(ARDUINO_PORT))
-	{
-		printf("Failed to open %s", ARDUINO_PORT);
-		return -1;
-	}
-
-	printf("Opened %s\n", ARDUINO_PORT);
-	usleep(2000 * 1000); // time to init microcontroller
-	CommandManager commMgr(&comPort);
+	CommandManager commMgr(ARDUINO_PORT);
+	System::SleepMS(2000); // time to init microcontroller
 
 //	uint logDelay = 1000 * 60 * 30;
 	uint logDelay = 5;
-	uint deadline = 0;
+	time_t deadline = 0;
 
 	// -------------------------------------------------------------------------
 
@@ -139,7 +131,7 @@ int main()
 	while (true)
 	{
 		commMgr.Update();
-		usleep(100 * 1000);
+		System::SleepMS(100);
 
 		if (false == readFlag)
 		{
@@ -155,7 +147,7 @@ int main()
 
 		if (true == readFlag)
 		{
-			const uint currentTime = time(NULL);
+			const time_t currentTime = time(NULL);
 			if (currentTime >= deadline)
 			{
 				deadline = (currentTime + logDelay);
@@ -169,26 +161,6 @@ int main()
 		}
 	}
 
-	/*
-	while (counter < exitBytes)
-	{
-		const uint r = comPort.Recv(buffer, 256);
-
-		if (r < 256)
-		{
-			buffer[r] = 0;
-			counter += r;
-
-			//if (r > 0)
-			{
-				printf("%d: %s\n", r, buffer);
-			}
-		}
-
-		sleep(1);
-	}
-	*/
-
-	comPort.Close();
+//	comPort.Close();
 	return 0;
 }

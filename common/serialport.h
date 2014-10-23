@@ -3,6 +3,7 @@ class CSerialPort
 public:
 	CSerialPort();
 	bool Open(const char * portName);
+	bool IsValid();
 	void Close();
 	uint Send(const void * data, uint byteCount);
 	uint Recv(void * buffer, uint maxByteCount);
