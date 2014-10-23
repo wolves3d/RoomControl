@@ -22,7 +22,7 @@ bool CSerialPort::IsValid()
 
 bool CSerialPort::Open(const char * port)
 {
-	if (false == IsPortValid(m_file))
+	if (false == IsValid(m_file))
 	{
 		m_file = open(port, O_RDWR | O_NOCTTY | O_NDELAY);
 
@@ -78,7 +78,7 @@ bool CSerialPort::Open(const char * port)
 
 void CSerialPort::Close()
 {
-	if (true == IsPortValid(m_file))
+	if (true == IsValid(m_file))
 	{
 		close(m_file);
 		m_file = -1;
@@ -88,7 +88,7 @@ void CSerialPort::Close()
 
 uint CSerialPort::Send(const void * data, uint byteCount)
 {
-	if (true == IsPortValid(m_file))
+	if (true == IsValid(m_file))
 	{
 		return write(m_file, data, byteCount);
 	}
@@ -99,7 +99,7 @@ uint CSerialPort::Send(const void * data, uint byteCount)
 
 uint CSerialPort::Recv(void * buffer, uint maxByteCount)
 {
-	if (true == IsPortValid(m_file))
+	if (true == IsValid(m_file))
 	{
 		int res = read(m_file, buffer, maxByteCount);
 
