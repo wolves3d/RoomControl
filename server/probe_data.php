@@ -22,7 +22,7 @@ if (!$result)
 	printf("sql error: %s\n", mysql_error($db));
 }
 			
-if (0 == mysql_numrows())
+if (0 == mysql_numrows($result))
 {
 	die ("Unknown sensor ID!");
 }
@@ -35,10 +35,9 @@ mysql_free_result($result);
 $query = "INSERT INTO `temp_probe_data` (`probe_id`, `datetime`, `temp` )\r\n".
 			"VALUES ('$sensor_id', NOW(), $probe_data);\r\n";
 			
-if (!mysql_query($query);)
+if (!mysql_query($query))
 {
 	printf("sql error: %s\n", mysql_error($db));
 }			
 
-*/
 ?>
