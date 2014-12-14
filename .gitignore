@@ -1,0 +1,5 @@
+Debug
+ipch
+/project/client/client.vcxproj.user
+*.suo
+*.sdf
