@@ -7,6 +7,9 @@
     <Filter Include="Source\common">
       <UniqueIdentifier>{99c89382-5ad6-46ca-890d-5698132fa1c5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\arduino">
+      <UniqueIdentifier>{96abed2c-a0d6-47f9-aa4f-75e5b5cf7231}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\client\pch.h">
@@ -17,6 +20,12 @@
     </ClInclude>
     <ClInclude Include="..\..\client\CommandManager.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\CommandHandlers.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\arduino\src\netCommand.h">
+      <Filter>Source\arduino</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

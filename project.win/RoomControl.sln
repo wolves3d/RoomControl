@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "client", "client\client.vcxproj", "{4F9CA02F-B5C8-442B-807D-9B3D36A0FA01}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "server", "server\server.vcxproj", "{A173065A-0D01-428D-B0CB-49AD316C050B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "arduino", "..\arduino\src\arduino.vcxproj", "{B0C2169D-0636-471F-9BBC-DFA9655C0E24}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4F9CA02F-B5C8-442B-807D-9B3D36A0FA01}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4F9CA02F-B5C8-442B-807D-9B3D36A0FA01}.Debug|Win32.Build.0 = Debug|Win32
+		{4F9CA02F-B5C8-442B-807D-9B3D36A0FA01}.Release|Win32.ActiveCfg = Release|Win32
+		{4F9CA02F-B5C8-442B-807D-9B3D36A0FA01}.Release|Win32.Build.0 = Release|Win32
+		{A173065A-0D01-428D-B0CB-49AD316C050B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A173065A-0D01-428D-B0CB-49AD316C050B}.Debug|Win32.Build.0 = Debug|Win32
+		{A173065A-0D01-428D-B0CB-49AD316C050B}.Release|Win32.ActiveCfg = Release|Win32
+		{A173065A-0D01-428D-B0CB-49AD316C050B}.Release|Win32.Build.0 = Release|Win32
+		{B0C2169D-0636-471F-9BBC-DFA9655C0E24}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B0C2169D-0636-471F-9BBC-DFA9655C0E24}.Debug|Win32.Build.0 = Debug|Win32
+		{B0C2169D-0636-471F-9BBC-DFA9655C0E24}.Release|Win32.ActiveCfg = Release|Win32
+		{B0C2169D-0636-471F-9BBC-DFA9655C0E24}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
