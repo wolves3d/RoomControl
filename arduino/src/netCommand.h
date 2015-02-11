@@ -23,9 +23,17 @@ enum ECommandID
 	RSP_PING = 12,
 	RSP_INVALID_REQUEST = 13,
 	RSP_INVALID_CMD = 14,
+
+	CMD_READ_EEPROM = 15,
+	RSP_READ_EEPROM = 16,
+
+	CMD_WRITE_EEPROM = 17,
+	RSP_WRITE_EEPROM = 18,
+
+	CMD_TABLE_SIZE	// must be at end of enum
 };
 
-#define CMD_SIZE_IN_BYTES 2
+// #define CMD_SIZE_IN_BYTES 2
 
 // -----------------------------------------------------------------------------
 
@@ -37,7 +45,8 @@ public:
 
 	static void Send(uint16_t cmdID, byte * data, byte count)
 	{
-		Serial.write((byte *)&cmdID, CMD_SIZE_IN_BYTES);
+		Serial.write((byte *)&cmdID, 1);
+		Serial.write((byte *)&count, 1);
 
 		if (count > 0)
 		{
