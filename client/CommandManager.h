@@ -37,7 +37,7 @@ public:
 };
 
 
-class CommandManager
+class CommandManagerArduino
 {
 	CommandHandler * m_handlerTable[ECommandID::CMD_TABLE_SIZE];
 
@@ -67,7 +67,7 @@ class CommandManager
 	void RegisterHandler(CommandHandler * handler);
 
 public:
-	CommandManager(const char * portName);
+	CommandManagerArduino(const char * portName);
 	void PushCommand(ECommandID cmd, void * data = NULL, uint byteCount = 0);
 	void Update();
 
@@ -77,4 +77,4 @@ public:
 };
 
 
-extern CommandManager * g_commMgr;
+extern CommandManagerArduino * g_commMgr;

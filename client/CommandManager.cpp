@@ -6,10 +6,10 @@
 void LogDB(const char * sensorID, float sensorT);
 
 
-CommandManager * g_commMgr = NULL;
+CommandManagerArduino * g_commMgr = NULL;
 
 
-CommandManager::CommandManager(const char * portName) 
+CommandManagerArduino::CommandManagerArduino(const char * portName) 
 	: m_portName(portName)
 	, m_waitForAnswerMode(false)
 	, m_isOneWireEnumerated(false)
@@ -31,7 +31,7 @@ CommandManager::CommandManager(const char * portName)
 }
 
 
-bool CommandManager::CheckPort()
+bool CommandManagerArduino::CheckPort()
 {
 	if (false == m_port.IsValid())
 	{
@@ -46,7 +46,7 @@ bool CommandManager::CheckPort()
 }
 
 
-void CommandManager::PushCommand(ECommandID cmd, void * data, uint byteCount)
+void CommandManagerArduino::PushCommand(ECommandID cmd, void * data, uint byteCount)
 {
 	Command command;
 	command.cmd = cmd;
@@ -61,7 +61,7 @@ void CommandManager::PushCommand(ECommandID cmd, void * data, uint byteCount)
 }
 
 
-bool CommandManager::TrySendCommand()
+bool CommandManagerArduino::TrySendCommand()
 {
 	if (0 == m_commandList.size())
 		return false;
@@ -95,14 +95,14 @@ bool CommandManager::TrySendCommand()
 }
 
 
-bool CommandManager::GetMoreData(void * buffer, uint byteCount)
+bool CommandManagerArduino::GetMoreData(void * buffer, uint byteCount)
 {
 	const uint readBytes = m_port.Recv(buffer, byteCount);
 	return true;
 }
 
 
-uint CommandManager::GetOneWireDeviceCount()
+uint CommandManagerArduino::GetOneWireDeviceCount()
 {
 	if (false == IsOneWireEnumerated())
 		return 0;
@@ -111,25 +111,25 @@ uint CommandManager::GetOneWireDeviceCount()
 }
 
 
-void CommandManager::AddOneWireDevice(OneWireAddr deviceAddr)
+void CommandManagerArduino::AddOneWireDevice(OneWireAddr deviceAddr)
 {
 	m_owDeviceList.push_back(deviceAddr);
 }
 
-const OneWireAddr & CommandManager::GetOneWireDeviceID(uint device)
+const OneWireAddr & CommandManagerArduino::GetOneWireDeviceID(uint device)
 {
 	return m_owDeviceList[device];
 }
 
 
-CommandHandler * CommandManager::GetHandlerWithID(ECommandID cmdID)
+CommandHandler * CommandManagerArduino::GetHandlerWithID(ECommandID cmdID)
 {
 	return (true == CheckHandlerID(cmdID))
 		? m_handlerTable[cmdID]
 		: NULL;
 }
 
-void CommandManager::RegisterHandler(CommandHandler * handler)
+void CommandManagerArduino::RegisterHandler(CommandHandler * handler)
 {
 	if (NULL == handler)
 	{
@@ -155,7 +155,7 @@ void CommandManager::RegisterHandler(CommandHandler * handler)
 }
 
 
-void CommandManager::ClearOneWireDeviceList()
+void CommandManagerArduino::ClearOneWireDeviceList()
 {
 	m_isOneWireEnumerated = false;
 	m_owDeviceList.clear();
@@ -164,14 +164,14 @@ void CommandManager::ClearOneWireDeviceList()
 }
 
 
-void CommandManager::OnOneWireEnumerated()
+void CommandManagerArduino::OnOneWireEnumerated()
 {
 	m_isOneWireEnumerated = true;
 	printf("RSP: 1wire enumerated!\n");
 }
 
 
-void CommandManager::Update()
+void CommandManagerArduino::Update()
 {
 	if (false == CheckPort())
 	{

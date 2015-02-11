@@ -10,13 +10,19 @@
     <Filter Include="Source\arduino">
       <UniqueIdentifier>{96abed2c-a0d6-47f9-aa4f-75e5b5cf7231}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\common\network">
+      <UniqueIdentifier>{d7c8ee4b-4f90-409f-997e-cc31d2eebf82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\common\network\tcp_socket">
+      <UniqueIdentifier>{5d4befe1-f67b-47fe-a4ee-d14b92d68d1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\common\network\serial_socket">
+      <UniqueIdentifier>{e74fa53f-2c5b-4c32-80a3-a5a3aec01452}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\client\pch.h">
       <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\serialport.h">
-      <Filter>Source\common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\client\CommandManager.h">
       <Filter>Source</Filter>
@@ -27,6 +33,18 @@
     <ClInclude Include="..\..\arduino\src\netCommand.h">
       <Filter>Source\arduino</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\submodules\CodeBase\network\tcp_socket\tcp_socket.h">
+      <Filter>Source\common\network\tcp_socket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\netCommand.h">
+      <Filter>Source\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\submodules\CodeBase\network\serial_socket\serialport.h">
+      <Filter>Source\common\network\serial_socket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\submodules\CodeBase\network\AbstractSocket.h">
+      <Filter>Source\common\network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\client\main.cpp">
@@ -35,11 +53,14 @@
     <ClCompile Include="..\..\client\pch.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\serialport_win32.cpp">
-      <Filter>Source\common</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\client\CommandManager.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\submodules\CodeBase\network\tcp_socket\tcp_socket.cpp">
+      <Filter>Source\common\network\tcp_socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\submodules\CodeBase\network\serial_socket\serialport_win32.cpp">
+      <Filter>Source\common\network\serial_socket</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

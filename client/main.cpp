@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "CommandManager.h"
+#include "tcp_socket.h"
 
 #define CURL_STATICLIB
 #include <curl/curl.h>
@@ -116,7 +117,13 @@ void OnEnumerationDone()
 
 int main()
 {
-	CommandManager commMgr(ARDUINO_PORT);
+	CTcpSocket serverSocket;
+	serverSocket.Connect("127.0.0.1", 35999);
+
+
+	// arduino -----------------------------------------------------------------
+
+	CommandManagerArduino commMgr(ARDUINO_PORT);
 	System::SleepMS(2000); // time to init microcontroller
 
 //	uint logDelay = 1000 * 60 * 30;

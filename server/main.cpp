@@ -37,6 +37,15 @@ struct MyDelegates : public IServerManagerDelegate
 		printf("accepted connection from %s, port %d\n",
 			inet_ntoa(socket->m_addr.sin_addr),
 			htons(socket->m_addr.sin_port));
+
+		/*
+		CNetworkCommand
+			id,
+			args
+
+
+		g_cmdManager->SendCommand(socket, );
+		*/
 	}
 };
 
@@ -59,7 +68,4 @@ void main()
 	}
 
 	serverMgr.Shutdown();
-
-// 	printf("accepted connection from %s, port %d\n",
-// 		inet_ntoa(pAddrOut->sin_addr), htons(pAddrOut->sin_port));
 }
