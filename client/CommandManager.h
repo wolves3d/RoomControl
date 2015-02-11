@@ -6,34 +6,65 @@
 class CSerialPort;
 
 
-class CommandManager
+class Command
 {
-	struct Command
-	{
-		// Mac packet size 16 byte
+public:
+	// begin header
+		//Max packet size 16 byte
 		byte cmd;
 		byte byteCount;
 		//byte crc;
-
 		byte args[14];
+	// end header
 
-		uint GetSize() const
-		{
-			return (2 + byteCount);
-		}
-	};
+public:
+	uint GetSize() const
+	{
+		return (2 + byteCount);
+	}
+};
 
-	vector <Command> m_commandList;
+
+class CommandHandler
+{
+private:
+	ECommandID m_cmdID;
+
+public:
+	CommandHandler(ECommandID cmdID) : m_cmdID(cmdID) {}
+	ECommandID GetCommandID() const { return m_cmdID; }
+	virtual void OnResponse(byte * data, uint size) = 0;
+};
+
+
+class CommandManager
+{
+	CommandHandler * m_handlerTable[ECommandID::CMD_TABLE_SIZE];
+
 	CSerialPort m_port;
 	string m_portName;
 	bool m_waitForAnswerMode;
+	vector <Command> m_commandList;
 
 	vector <OneWireAddr> m_owDeviceList;
 	bool m_isOneWireEnumerated;
 
+	// OneWire -----------------------------------------------------------------
+	friend class OneWireEnumBegin;
+	friend class OneWireRomFound;
+	friend class OneWireEnumEnd;
+	void ClearOneWireDeviceList();
+	void AddOneWireDevice(OneWireAddr deviceAddr);
+	void OnOneWireEnumerated();
+	// -------------------------------------------------------------------------
+
 	bool CheckPort();
 	bool TrySendCommand();
 	bool GetMoreData(void * buffer, uint byteCount);
+
+	bool CheckHandlerID(ECommandID cmdID) { return ((cmdID >= 0) && cmdID < (CMD_TABLE_SIZE)); }
+	CommandHandler * GetHandlerWithID(ECommandID cmdID);
+	void RegisterHandler(CommandHandler * handler);
 
 public:
 	CommandManager(const char * portName);

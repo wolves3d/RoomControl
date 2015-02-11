@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "CommandManager.h"
+#include "CommandHandlers.h"
 
 
 void LogDB(const char * sensorID, float sensorT);
@@ -13,7 +14,19 @@ CommandManager::CommandManager(const char * portName)
 	, m_waitForAnswerMode(false)
 	, m_isOneWireEnumerated(false)
 {
+	memset(m_handlerTable, 0, sizeof(m_handlerTable));
+
+	// FIXME: memory leak, no free on destruct
+	RegisterHandler(new OneWireEnumBegin());
+	RegisterHandler(new OneWireRomFound());
+	RegisterHandler(new OneWireEnumEnd());
+	RegisterHandler(new OneWireTemperature());
+	RegisterHandler(new PingResponse());
+	RegisterHandler(new ReadEEPROM());
+	RegisterHandler(new WriteEEPROM());
+
 	g_commMgr = this;
+
 	Update();
 }
 
@@ -98,9 +111,63 @@ uint CommandManager::GetOneWireDeviceCount()
 }
 
 
+void CommandManager::AddOneWireDevice(OneWireAddr deviceAddr)
+{
+	m_owDeviceList.push_back(deviceAddr);
+}
+
 const OneWireAddr & CommandManager::GetOneWireDeviceID(uint device)
 {
 	return m_owDeviceList[device];
+}
+
+
+CommandHandler * CommandManager::GetHandlerWithID(ECommandID cmdID)
+{
+	return (true == CheckHandlerID(cmdID))
+		? m_handlerTable[cmdID]
+		: NULL;
+}
+
+void CommandManager::RegisterHandler(CommandHandler * handler)
+{
+	if (NULL == handler)
+	{
+		printf("RegisterHandler error: invalid handler");
+		return;
+	}
+
+	ECommandID cmdID = handler->GetCommandID();
+
+	if (false == CheckHandlerID(cmdID))
+	{
+		printf("RegisterHandler error: invalid handler ID");
+		return;
+	}
+	
+	if (NULL != GetHandlerWithID(cmdID))
+	{
+		printf("RegisterHandler error: handler %d already registred!", cmdID);
+		return;
+	}
+
+	m_handlerTable[cmdID] = handler;
+}
+
+
+void CommandManager::ClearOneWireDeviceList()
+{
+	m_isOneWireEnumerated = false;
+	m_owDeviceList.clear();
+
+	printf("RSP: 1wire enum begin\n");
+}
+
+
+void CommandManager::OnOneWireEnumerated()
+{
+	m_isOneWireEnumerated = true;
+	printf("RSP: 1wire enumerated!\n");
 }
 
 
@@ -108,7 +175,8 @@ void CommandManager::Update()
 {
 	if (false == CheckPort())
 	{
-		// port prolem
+		// port problem
+		printf("port problem\n");
 		System::SleepMS(1000);
 		return;
 	}
@@ -118,119 +186,55 @@ void CommandManager::Update()
 		m_waitForAnswerMode = TrySendCommand();
 	}
 
+	// -- reading response and args
+
+	byte buf[256];
+	memset(buf, 0, sizeof(buf));
+	byte * argData = (buf + 2);
 	ECommandID cmdID = CMD_NOP;
-	const uint readBytes = m_port.Recv(&cmdID, 2);
+	uint readBytes = m_port.Recv(buf, 2);
+
 	if (0 == readBytes)
+	{
+		// no input
 		return;
-
-	switch (cmdID)
-	{
-	case RSP_ONE_WIRE_ENUM_BEGIN:
-		m_owDeviceList.clear();
-		printf("RSP: 1wire enum begin\n");
-		break;
-
-	case RSP_ONE_WIRE_ROM_FOUND:
-		{
-
-			byte addr[8];
-			uint r = m_port.Recv(addr, 8);
-
-			printf("RSP: 1wire rom found addr ");
-			for (uint i = 0; i < OneWireAddr::ADDR_LEN; ++i)
-				printf("%02X ", addr[i]);
-			printf("\n");
-
-			m_owDeviceList.push_back( OneWireAddr(addr) );
-
-			//g_commMgr->SendCommand(CMD_OW_READ_TEMP_SENSOR_DATA, addr, 8);
-		}
-		break;
-
-	case RSP_ONE_WIRE_ENUM_END:
-	{
-		printf("RSP: 1wire enumerated!\n");
-		m_isOneWireEnumerated = true;
 	}
-	break;
 
-	case RSP_OW_TEMP_SENSOR_DATA:
+	if (2 != readBytes)
+	{
+		printf("protocol error!\n (%d bytes)", readBytes);
+		return;
+	}
+
+	cmdID = (ECommandID)buf[0];
+	uint size = buf[1];
+
+	if (0 != size)
+	{
+		readBytes = m_port.Recv(argData, size);
+
+		if (size != readBytes)
 		{
-			const uint buffSize = OneWireAddr::ADDR_LEN + OneWireAddr::DATA_LEN;
-			byte dstBuffer[buffSize];
-			memset(dstBuffer, 0, buffSize);
-			g_commMgr->GetMoreData(dstBuffer, buffSize);
-
-			// hack objects
-			OneWireAddr * addr = (OneWireAddr *)dstBuffer;
-			byte * data = dstBuffer + OneWireAddr::ADDR_LEN;
-
-			printf("RSP: sensor data id:");
-			for (uint i = 0; i < OneWireAddr::ADDR_LEN; ++i)
-				printf("%02X ", dstBuffer[i]);
-
-			printf("data: ");
-			for (uint i = 0; i < OneWireAddr::DATA_LEN; ++i)
-				printf("%02X ", dstBuffer[OneWireAddr::ADDR_LEN + i]);
-
-			int raw = (data[1] << 8) | data[0];
-
-			switch (addr->GetChipID())
-			{
-				case ECID_DS1822:
-				case ECID_DS18B20:
-				{
-					byte cfg = (data[4] & 0x60);
-					// at lower res, the low bits are undefined, so let's zero them
-					if (cfg == 0x00) raw = raw & ~7;  // 9 bit resolution, 93.75 ms
-					else if (cfg == 0x20) raw = raw & ~3; // 10 bit res, 187.5 ms
-					else if (cfg == 0x40) raw = raw & ~1; // 11 bit res, 375 ms
-					//// default is 12 bit resolution, 750 ms conversion time
-				}
-				break;
-
-				case ECID_DS18S20:
-				{
-					raw = raw << 3; // 9 bit resolution default
-					if (data[7] == 0x10)
-					{
-						// "count remain" gives full 12 bit resolution
-						raw = (raw & 0xFFF0) + 12 - data[6];
-					}
-				}
-				break;
-
-				default:
-					printf("UNKNOWN CHIP ID!");
-			}
-
-			float celsius = (float)raw / 16.f;
-			printf("Temperature = %02.02fC / %02.02fF\n", celsius, (32 + (1.8f * celsius)));
-
-			const string sensorID( addr->ToString() );
-			LogDB(sensorID.c_str(), celsius);
+			printf("data read error (%d bytes) expected %d bytes\n", readBytes, size);
+			return;
 		}
-		break;
+	}
 
-	case RSP_INVALID_REQUEST:
-		printf("RSP: invalid request\n");
-		break;
-
-	case RSP_PING:
+	CommandHandler * handler = GetHandlerWithID(cmdID);
+	if (NULL != handler)
+	{
+		handler->OnResponse(argData, size);
+	}
+	else
+	{
+		if (RSP_INVALID_REQUEST == cmdID)
 		{
-			uint workTime = 0;
-			g_commMgr->GetMoreData(&workTime, 2);
-			//printf("ping: work time %d sec\n", workTime);
+			printf("RSP: invalid request\n");
 		}
-		break;
-
-	case RSP_INVALID_CMD:
-		printf("RSP_INVALID_CMD: %02x %02x\n", *(byte *)(&cmdID), *(byte *)((&cmdID) + 1));
-		break;
-
-	default:
-		printf("DEFAULT: %02x (%d bytes)\n", cmdID, readBytes);
-		break;
+		else
+		{
+			printf("NO HANDLER! %02x (%d bytes)\n", cmdID, readBytes);
+		}
 	}
 
 	m_waitForAnswerMode = false;
