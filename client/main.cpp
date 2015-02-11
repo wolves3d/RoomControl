@@ -126,6 +126,17 @@ int main()
 	// -------------------------------------------------------------------------
 
 	bool readFlag = false;
+
+	/*
+	byte args[] = { 0, 8, 0, 1, 2, 3, 4, 5, 6, 7 };
+	g_commMgr->PushCommand(CMD_WRITE_EEPROM, &args, sizeof(args));
+	*/
+
+	
+	byte args[] = { 0, 8 };
+	g_commMgr->PushCommand(CMD_READ_EEPROM, &args, sizeof(args));
+	
+
 	g_commMgr->PushCommand(CMD_REQUEST_ONE_WIRE_ENUM);
 	
 	while (true)
@@ -140,6 +151,7 @@ int main()
 				OnEnumerationDone();
 				readFlag = true;
 
+				// test "turn on relay"
 				byte data[] = { 4, 0 };
 				g_commMgr->PushCommand(CMD_PIN_WRITE, &data, sizeof(data));
 			}
