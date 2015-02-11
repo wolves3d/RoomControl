@@ -3,3 +3,5 @@ ipch
 /project/client/client.vcxproj.user
 *.suo
 *.sdf
+/project.win/client/*.user
+/project.win/*.opensdf
