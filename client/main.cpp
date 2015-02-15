@@ -1,10 +1,17 @@
 #include "pch.h"
+//#include "CommandManagerArduino.h"
+
 #include "CommandManager.h"
+#include "serialport.h"
 #include "tcp_socket.h"
+#include "netCommand.h"
 
 #define CURL_STATICLIB
 #include <curl/curl.h>
 #include <curl/easy.h>
+
+#include "Arduino/ArduinoManager.h"
+#include "Arduino/CommandHandlers.h"
 
 
 std::string u_string_format(const char *fmt, ...)
@@ -102,29 +109,50 @@ void LogDB(const char * sensorID, float sensorT)
 
 void OnEnumerationDone()
 {
+	/*
 	for (uint i = 0; i < g_commMgr->GetOneWireDeviceCount(); ++i)
 	{
 		OneWireAddr addr = g_commMgr->GetOneWireDeviceID(i);
 
-		g_commMgr->PushCommand(
+		g_commMgr->SendCommand(
 			CMD_OW_READ_TEMP_SENSOR_DATA,
 			addr.Address(),
 			OneWireAddr::ADDR_LEN);
 	}
-	
+	*/
 }
 
 
 int main()
 {
-	CTcpSocket serverSocket;
-	serverSocket.Connect("127.0.0.1", 35999);
+	//CTcpSocket serverSocket;
+	//serverSocket.Connect("127.0.0.1", 35999);
 
+	//CNetPacket packet;
 
 	// arduino -----------------------------------------------------------------
 
-	CommandManagerArduino commMgr(ARDUINO_PORT);
+	ArduinoManager arduinoMgr;
+
+	CSerialPacket packet;
+	CCommandManager arduinoCmdManager(&packet);
+	// FIXME: memory leak, no free on destruct
+	arduinoCmdManager.RegisterHandler(new OneWireEnumBegin());
+	arduinoCmdManager.RegisterHandler(new OneWireRomFound());
+	arduinoCmdManager.RegisterHandler(new OneWireEnumEnd());
+	arduinoCmdManager.RegisterHandler(new OneWireTemperature());
+	arduinoCmdManager.RegisterHandler(new PingResponse());
+	arduinoCmdManager.RegisterHandler(new ReadEEPROM());
+	arduinoCmdManager.RegisterHandler(new WriteEEPROM());
+
+	CSerialPort arduinoPort;
+	arduinoPort.Open(ARDUINO_PORT);
 	System::SleepMS(2000); // time to init microcontroller
+	ArduinoDevice * device = arduinoMgr.FindDevice(&arduinoPort); // register device
+
+	arduinoCmdManager.GetPacketManager()->AddClent(&arduinoPort);
+
+	
 
 //	uint logDelay = 1000 * 60 * 30;
 	uint logDelay = 5;
@@ -140,27 +168,27 @@ int main()
 	*/
 
 	
-	byte args[] = { 0, 8 };
-	g_commMgr->PushCommand(CMD_READ_EEPROM, &args, sizeof(args));
+// 	byte args[] = { 0, 8 };
+// 	arduinoCmdManager.SendCommand(&arduinoPort, CMD_READ_EEPROM, &args, sizeof(args));
 	
 
-	g_commMgr->PushCommand(CMD_REQUEST_ONE_WIRE_ENUM);
+	arduinoCmdManager.SendCommand(&arduinoPort, CMD_REQUEST_ONE_WIRE_ENUM);
 	
 	while (true)
 	{
-		commMgr.Update();
+		arduinoCmdManager.OnUpdate();
 		System::SleepMS(100);
 
 		if (false == readFlag)
 		{
-			if (true == g_commMgr->IsOneWireEnumerated())
+			if (true == device->IsOneWireEnumerated())
 			{
-				OnEnumerationDone();
+				//OnEnumerationDone();
 				readFlag = true;
 
 				// test "turn on relay"
 				byte data[] = { 4, 0 };
-				g_commMgr->PushCommand(CMD_PIN_WRITE, &data, sizeof(data));
+				arduinoCmdManager.SendCommand(&arduinoPort, CMD_PIN_WRITE, &data, sizeof(data));
 			}
 		}
 
@@ -170,9 +198,10 @@ int main()
 			if (currentTime >= deadline)
 			{
 				deadline = (currentTime + logDelay);
-				OneWireAddr addr = g_commMgr->GetOneWireDeviceID(0);
+				OneWireAddr addr = device->GetOneWireDevice(0);
 
-				g_commMgr->PushCommand(
+				arduinoCmdManager.SendCommand(
+					&arduinoPort,
 					CMD_OW_READ_TEMP_SENSOR_DATA,
 					addr.Address(),
 					OneWireAddr::ADDR_LEN);
