@@ -73,7 +73,21 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Visual Micro\.arduino.vsarduino.h" />
+    <ClInclude Include="CommandManager.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="netCommand.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="OneWireWrapper.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="pinWatchDog.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="StateBlink.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
     <ClInclude Include="Visual Micro\.src.vsarduino.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

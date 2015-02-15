@@ -37,7 +37,51 @@ enum ECommandID
 
 // -----------------------------------------------------------------------------
 
-#ifndef CLIENT_IMPL
+#ifdef CLIENT_IMPL
+
+
+class CSerialPacket : public ITransportPacket
+{
+	struct PacketHeader
+	{
+		byte	cmdID;			// Уникальный идентификатор команды
+		byte	dataByteCount;	// Размер аргумента команды
+	};
+
+public:
+
+	// ITransportPacket --------------------------------------------------------
+
+	virtual uint GetHeaderSize() const { return sizeof(PacketHeader); }
+	virtual bool CheckHeader(const void * header, uint byteCount) { return false; }
+
+	virtual uint GetArgumentSize(const void * packetBytes)
+	{
+		return (uint)((PacketHeader *)packetBytes)->dataByteCount;
+	}
+
+	virtual bool CheckPacket(const void * packet, uint byteCount) { return false; }
+
+	virtual void FillHeader(void * dst, uint cmdID, uint byteCount)
+	{
+		if (NULL == dst)
+			return;
+
+		PacketHeader * header = (PacketHeader *)dst;
+
+		header->cmdID = cmdID;
+		header->dataByteCount = byteCount;
+
+		// FIXME: add CRC checksums here!
+	}
+
+	virtual uint GetCommandID(const void * packetBytes)
+	{
+		return ((PacketHeader *)packetBytes)->cmdID;
+	}
+};
+
+#else
 
 class SerialCommand
 {

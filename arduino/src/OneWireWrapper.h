@@ -20,12 +20,12 @@ struct OneWireAddr
 		memset(addr, 0x0, ADDR_LEN);
 	}
 
-	OneWireAddr(byte * other_addr)
+	OneWireAddr(const byte * other_addr)
 	{
 		Set(other_addr);
 	}
 
-	void Set(byte * other_addr)
+	void Set(const byte * other_addr)
 	{
 		memcpy(addr, other_addr, ADDR_LEN);
 	}

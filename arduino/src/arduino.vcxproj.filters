@@ -18,10 +18,22 @@
     <None Include="arduino.ino" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Visual Micro\.arduino.vsarduino.h">
+    <ClInclude Include="Visual Micro\.src.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Visual Micro\.src.vsarduino.h">
+    <ClInclude Include="CommandManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OneWireWrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StateBlink.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pinWatchDog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
