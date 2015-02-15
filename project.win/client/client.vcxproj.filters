@@ -10,21 +10,24 @@
     <Filter Include="Source\arduino">
       <UniqueIdentifier>{96abed2c-a0d6-47f9-aa4f-75e5b5cf7231}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\common\network">
+    <Filter Include="Source\CodeBase">
+      <UniqueIdentifier>{96f9f551-54ef-4089-bec0-a84572de9790}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\CodeBase\network">
       <UniqueIdentifier>{d7c8ee4b-4f90-409f-997e-cc31d2eebf82}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\common\network\tcp_socket">
+    <Filter Include="Source\CodeBase\network\tcp_socket">
       <UniqueIdentifier>{5d4befe1-f67b-47fe-a4ee-d14b92d68d1d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\common\network\serial_socket">
+    <Filter Include="Source\CodeBase\network\serial_socket">
       <UniqueIdentifier>{e74fa53f-2c5b-4c32-80a3-a5a3aec01452}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\CodeBase\network\transport">
+      <UniqueIdentifier>{7f909e1a-5eb6-4268-9296-344a28e7af67}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\client\pch.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\client\CommandManager.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\client\CommandHandlers.h">
@@ -34,16 +37,34 @@
       <Filter>Source\arduino</Filter>
     </ClInclude>
     <ClInclude Include="..\..\submodules\CodeBase\network\tcp_socket\tcp_socket.h">
-      <Filter>Source\common\network\tcp_socket</Filter>
+      <Filter>Source\CodeBase\network\tcp_socket</Filter>
     </ClInclude>
     <ClInclude Include="..\..\common\netCommand.h">
       <Filter>Source\common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\submodules\CodeBase\network\serial_socket\serialport.h">
-      <Filter>Source\common\network\serial_socket</Filter>
+      <Filter>Source\CodeBase\network\serial_socket</Filter>
     </ClInclude>
     <ClInclude Include="..\..\submodules\CodeBase\network\AbstractSocket.h">
-      <Filter>Source\common\network</Filter>
+      <Filter>Source\CodeBase\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\CommandManagerArduino.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\submodules\CodeBase\network\transport\CommandManager.h">
+      <Filter>Source\CodeBase\network\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\submodules\CodeBase\network\transport\PacketManager.h">
+      <Filter>Source\CodeBase\network\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\submodules\CodeBase\network\transport\ServerManager.h">
+      <Filter>Source\CodeBase\network\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\Arduino\ArduinoManager.h">
+      <Filter>Source\arduino</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\Arduino\CommandHandlers.h">
+      <Filter>Source\arduino</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -53,14 +74,17 @@
     <ClCompile Include="..\..\client\pch.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\client\CommandManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\submodules\CodeBase\network\tcp_socket\tcp_socket.cpp">
-      <Filter>Source\common\network\tcp_socket</Filter>
+      <Filter>Source\CodeBase\network\tcp_socket</Filter>
     </ClCompile>
     <ClCompile Include="..\..\submodules\CodeBase\network\serial_socket\serialport_win32.cpp">
-      <Filter>Source\common\network\serial_socket</Filter>
+      <Filter>Source\CodeBase\network\serial_socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\submodules\CodeBase\network\transport\CommandManager.cpp">
+      <Filter>Source\CodeBase\network\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\client\Arduino\ArduinoManager.cpp">
+      <Filter>Source\arduino</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

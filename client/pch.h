@@ -7,6 +7,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <assert.h>
 //#include <strsafe.h>
 
 // It should be mentioned that if you try to access COM ports > 9 with CreateFile,
@@ -29,6 +30,8 @@
 
 #include <string>  /* String function definitions */
 #include <vector>
+#include <map>
+#include <queue>
 using namespace std;
 
 
@@ -39,5 +42,9 @@ struct System
 {
 	static void SleepMS(uint ms);
 };
+
+#include "CodeBase.h"
+
+#define FAIL(X) assert(false)
 
 #endif // #ifndef __pch_h_included__
