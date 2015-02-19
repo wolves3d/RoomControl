@@ -4,7 +4,6 @@
 #include "CommandManager.h"
 #include "serialport.h"
 #include "tcp_socket.h"
-#include "netCommand.h"
 
 #define CURL_STATICLIB
 #include <curl/curl.h>
@@ -13,21 +12,7 @@
 #include "Arduino/ArduinoManager.h"
 #include "Arduino/CommandHandlers.h"
 
-
-std::string u_string_format(const char *fmt, ...)
-{
-
-	char ret[4 * 4096 + 1] = {0};
-	va_list ap;
-
-	va_start(ap, fmt);
-	vsnprintf(ret, 4 * 4096, fmt, ap);
-	va_end(ap);
-
-	std::string str(ret);
-
-	return str;
-}
+#include "Server/Server.h"
 
 
 void LogDB(const char * sensorID, float sensorT)
@@ -106,10 +91,9 @@ void LogDB(const char * sensorID, float sensorT)
 }
 
 
-
+/*
 void OnEnumerationDone()
 {
-	/*
 	for (uint i = 0; i < g_commMgr->GetOneWireDeviceCount(); ++i)
 	{
 		OneWireAddr addr = g_commMgr->GetOneWireDeviceID(i);
@@ -119,21 +103,27 @@ void OnEnumerationDone()
 			addr.Address(),
 			OneWireAddr::ADDR_LEN);
 	}
-	*/
 }
+*/
+
+class ClientGetGUIDResponse : public IResponseHandler
+{
+	HANDLER_HEADER(ClientGetGUIDResponse, CMD_GET_CLIENT_GUID)
+	{
+		printf("client: response - get client GUID\n");
+		mgr->SendCommand(socket, RSP_GET_CLIENT_GUID, NULL, 0);
+	}
+};
 
 
 int main()
 {
-	//CTcpSocket serverSocket;
-	//serverSocket.Connect("127.0.0.1", 35999);
-
-	//CNetPacket packet;
+	CServer server(SERVER_PORT);
 
 	// arduino -----------------------------------------------------------------
 
 	ArduinoManager arduinoMgr;
-
+	
 	CSerialPacket packet;
 	CCommandManager arduinoCmdManager(&packet);
 	// FIXME: memory leak, no free on destruct
@@ -146,17 +136,31 @@ int main()
 	arduinoCmdManager.RegisterHandler(new WriteEEPROM());
 
 	CSerialPort arduinoPort;
-	arduinoPort.Open(ARDUINO_PORT);
-	System::SleepMS(2000); // time to init microcontroller
+	if (true == arduinoPort.Open(ARDUINO_PORT))
+	{
+		System::SleepMS(2000); // time to init microcontroller
+		arduinoCmdManager.GetPacketManager()->AddClent(&arduinoPort);
+	}
+
 	ArduinoDevice * device = arduinoMgr.FindDevice(&arduinoPort); // register device
 
-	arduinoCmdManager.GetPacketManager()->AddClent(&arduinoPort);
-
-	
 
 //	uint logDelay = 1000 * 60 * 30;
 	uint logDelay = 5;
 	time_t deadline = 0;
+	
+	// -------------------------------------------------------------------------
+
+	//CServer server(SERVER_PORT);
+
+	// -------------------------------------------------------------------------
+
+	CCommandManager netCmdManager(new CNetPacket());
+	netCmdManager.RegisterHandler(new ClientGetGUIDResponse());
+
+	CTcpSocket serverSocket;
+	serverSocket.Connect("127.0.0.1", SERVER_PORT);
+	netCmdManager.GetPacketManager()->AddClent(&serverSocket);
 
 	// -------------------------------------------------------------------------
 
@@ -172,10 +176,12 @@ int main()
 // 	arduinoCmdManager.SendCommand(&arduinoPort, CMD_READ_EEPROM, &args, sizeof(args));
 	
 
-	arduinoCmdManager.SendCommand(&arduinoPort, CMD_REQUEST_ONE_WIRE_ENUM);
+	arduinoCmdManager.SendCommand(&arduinoPort, CMD_REQUEST_ONE_WIRE_ENUM, NULL, 0);
 	
 	while (true)
 	{
+		server.OnUpdate();
+		netCmdManager.OnUpdate();
 		arduinoCmdManager.OnUpdate();
 		System::SleepMS(100);
 

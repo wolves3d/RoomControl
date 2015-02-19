@@ -12,31 +12,40 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\arduino\src\netCommand.h" />
-    <ClInclude Include="..\..\client\Arduino\ArduinoManager.h" />
-    <ClInclude Include="..\..\client\Arduino\CommandHandlers.h" />
-    <ClInclude Include="..\..\client\CommandHandlers.h" />
-    <ClInclude Include="..\..\client\CommandManagerArduino.h" />
-    <ClInclude Include="..\..\client\pch.h" />
-    <ClInclude Include="..\..\common\netCommand.h" />
+    <ClInclude Include="..\..\source\Arduino\ArduinoManager.h" />
+    <ClInclude Include="..\..\source\Arduino\CommandHandlers.h" />
+    <ClInclude Include="..\..\source\NetPacket.h" />
+    <ClInclude Include="..\..\source\pch.h" />
+    <ClInclude Include="..\..\source\Server\MySqlClient.h" />
+    <ClInclude Include="..\..\source\Server\SensorManager.h" />
+    <ClInclude Include="..\..\source\Server\Server.h" />
+    <ClInclude Include="..\..\submodules\CodeBase\CodeBase.h" />
     <ClInclude Include="..\..\submodules\CodeBase\network\AbstractSocket.h" />
     <ClInclude Include="..\..\submodules\CodeBase\network\serial_socket\serialport.h" />
     <ClInclude Include="..\..\submodules\CodeBase\network\tcp_socket\tcp_socket.h" />
     <ClInclude Include="..\..\submodules\CodeBase\network\transport\CommandManager.h" />
+    <ClInclude Include="..\..\submodules\CodeBase\network\transport\NetListener.h" />
     <ClInclude Include="..\..\submodules\CodeBase\network\transport\PacketManager.h" />
-    <ClInclude Include="..\..\submodules\CodeBase\network\transport\ServerManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\client\Arduino\ArduinoManager.cpp">
+    <ClCompile Include="..\..\source\Arduino\ArduinoManager.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\..\client\main.cpp" />
-    <ClCompile Include="..\..\client\pch.cpp">
+    <ClCompile Include="..\..\source\main.cpp" />
+    <ClCompile Include="..\..\source\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="..\..\submodules\CodeBase\network\serial_socket\serialport_win32.cpp" />
-    <ClCompile Include="..\..\submodules\CodeBase\network\tcp_socket\tcp_socket.cpp" />
-    <ClCompile Include="..\..\submodules\CodeBase\network\transport\CommandManager.cpp" />
+    <ClCompile Include="..\..\source\Server\Sensor.cpp" />
+    <ClCompile Include="..\..\source\Server\SensorManager.cpp" />
+    <ClCompile Include="..\..\submodules\CodeBase\network\serial_socket\serialport_win32.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\submodules\CodeBase\network\tcp_socket\tcp_socket.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\submodules\CodeBase\network\transport\CommandManager.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4F9CA02F-B5C8-442B-807D-9B3D36A0FA01}</ProjectGuid>
@@ -77,21 +86,20 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\submodules\CodeBase;$(SolutionDir)\..\submodules\CodeBase\network\;$(SolutionDir)\..\submodules\CodeBase\network\serial_socket;$(SolutionDir)\..\submodules\CodeBase\network\tcp_socket;$(SolutionDir)\..\submodules\CodeBase\network\transport;C:\Dev\RoomControl\client;C:\Dev\RoomControl\common;C:\Dev\RoomControl\thirdparty\curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\submodules\CodeBase;$(SolutionDir)\..\submodules\CodeBase\network\;$(SolutionDir)\..\submodules\CodeBase\network\serial_socket;$(SolutionDir)\..\submodules\CodeBase\network\tcp_socket;$(SolutionDir)\..\submodules\CodeBase\network\transport;$(SolutionDir)\..\submodules\CodeBase\thirdparty\pthread;$(SolutionDir)\..\thirdparty\curl\include;$(SolutionDir)\..\thirdparty\mysql\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libcurl.lib;ws2_32.lib;wldap32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Dev\RoomControl\thirdparty\curl\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;pthreadVCE2.lib;libcurl.lib;libmysql.lib;wldap32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\thirdparty\curl\win32;$(SolutionDir)\..\thirdparty\mysql\lib;$(SolutionDir)\..\submodules\CodeBase\thirdparty\pthread\win32lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>MSVCRT</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -111,6 +119,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\thirdparty\curl\win32;$(SolutionDir)\..\submodules\CodeBase\thirdparty\pthread\win32lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;pthreadVCE2.lib;libcurl.lib;wldap32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

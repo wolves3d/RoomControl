@@ -1,5 +1,5 @@
-#include "../arduino/src/netCommand.h"
-#include "../arduino/src/OneWireWrapper.h"
+#include "../../arduino/src/netCommand.h"
+#include "../../arduino/src/OneWireWrapper.h"
 
 
 class ArduinoDevice

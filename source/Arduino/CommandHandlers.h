@@ -4,11 +4,11 @@
 	public: \
 	virtual const char * GetName() const { return #HANDLER_NAME; } \
 	virtual uint GetCommandID() const { return COMMAND_ID; } \
-	virtual void OnResponse(const byte * data, uint size, IAbstractSocket * socket)
+	virtual void OnResponse(const byte * data, uint size, IAbstractSocket * socket, CCommandManager * mgr)
 
 
 
-class PingResponse : public ICommandHandler
+class PingResponse : public IResponseHandler
 {
 	HANDLER_HEADER(PingResponse, RSP_PING)
 	{
@@ -18,7 +18,7 @@ class PingResponse : public ICommandHandler
 };
 
 
-class OneWireEnumBegin : public ICommandHandler
+class OneWireEnumBegin : public IResponseHandler
 {
 	HANDLER_HEADER(OneWireEnumBegin, RSP_ONE_WIRE_ENUM_BEGIN)
 	{
@@ -33,7 +33,7 @@ class OneWireEnumBegin : public ICommandHandler
 };
 
 
-class OneWireRomFound : public ICommandHandler
+class OneWireRomFound : public IResponseHandler
 {
 	HANDLER_HEADER(OneWireRomFound, RSP_ONE_WIRE_ROM_FOUND)
 	{
@@ -61,7 +61,7 @@ class OneWireRomFound : public ICommandHandler
 };
 
 
-class OneWireEnumEnd : public ICommandHandler
+class OneWireEnumEnd : public IResponseHandler
 {
 	HANDLER_HEADER(OneWireEnumEnd, RSP_ONE_WIRE_ENUM_END)
 	{
@@ -76,7 +76,7 @@ class OneWireEnumEnd : public ICommandHandler
 };
 
 
-class OneWireTemperature : public ICommandHandler
+class OneWireTemperature : public IResponseHandler
 {
 	HANDLER_HEADER(OneWireTemperature, RSP_OW_TEMP_SENSOR_DATA)
 	{
@@ -134,7 +134,7 @@ class OneWireTemperature : public ICommandHandler
 };
 
 
-class ReadEEPROM : public ICommandHandler
+class ReadEEPROM : public IResponseHandler
 {
 	HANDLER_HEADER(ReadEEPROM, RSP_READ_EEPROM)
 	{
@@ -149,7 +149,7 @@ class ReadEEPROM : public ICommandHandler
 	}
 };
 
-class WriteEEPROM : public ICommandHandler
+class WriteEEPROM : public IResponseHandler
 {
 	HANDLER_HEADER(WriteEEPROM, RSP_WRITE_EEPROM)
 	{

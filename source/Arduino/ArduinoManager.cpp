@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "CommandManager.h"
-#include "Arduino/ArduinoManager.h"
-#include "Arduino/CommandHandlers.h"
+#include "ArduinoManager.h"
+#include "CommandHandlers.h"
 
 
 ArduinoManager * g_arduinoManager = NULL;
