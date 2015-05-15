@@ -1,18 +1,9 @@
 #include "pch.h"
-//#include "CommandManagerArduino.h"
-
-#include "CommandManager.h"
-#include "serialport.h"
-#include "tcp_socket.h"
+#include "Client.h"
 
 #define CURL_STATICLIB
 #include <curl/curl.h>
 #include <curl/easy.h>
-
-#include "Arduino/ArduinoManager.h"
-#include "Arduino/CommandHandlers.h"
-
-#include "Server/Server.h"
 
 
 void LogDB(const char * sensorID, float sensorT)
@@ -91,79 +82,21 @@ void LogDB(const char * sensorID, float sensorT)
 }
 
 
-/*
-void OnEnumerationDone()
-{
-	for (uint i = 0; i < g_commMgr->GetOneWireDeviceCount(); ++i)
-	{
-		OneWireAddr addr = g_commMgr->GetOneWireDeviceID(i);
-
-		g_commMgr->SendCommand(
-			CMD_OW_READ_TEMP_SENSOR_DATA,
-			addr.Address(),
-			OneWireAddr::ADDR_LEN);
-	}
-}
-*/
-
-class ClientGetGUIDResponse : public IResponseHandler
-{
-	HANDLER_HEADER(ClientGetGUIDResponse, CMD_GET_CLIENT_GUID)
-	{
-		printf("client: response - get client GUID\n");
-		mgr->SendCommand(socket, RSP_GET_CLIENT_GUID, NULL, 0);
-	}
-};
-
-
 int main()
 {
 	CServer server(SERVER_PORT);
 
-	// arduino -----------------------------------------------------------------
+	// -------------------------------------------------------------------------
 
-	ArduinoManager arduinoMgr;
-	
-	CSerialPacket packet;
-	CCommandManager arduinoCmdManager(&packet);
-	// FIXME: memory leak, no free on destruct
-	arduinoCmdManager.RegisterHandler(new OneWireEnumBegin());
-	arduinoCmdManager.RegisterHandler(new OneWireRomFound());
-	arduinoCmdManager.RegisterHandler(new OneWireEnumEnd());
-	arduinoCmdManager.RegisterHandler(new OneWireTemperature());
-	arduinoCmdManager.RegisterHandler(new PingResponse());
-	arduinoCmdManager.RegisterHandler(new ReadEEPROM());
-	arduinoCmdManager.RegisterHandler(new WriteEEPROM());
+	printf("--- Client ---\n");
+	CClient client;
+	client.Init("127.0.0.1", SERVER_PORT);
 
-	CSerialPort arduinoPort;
-	if (true == arduinoPort.Open(ARDUINO_PORT))
-	{
-		System::SleepMS(2000); // time to init microcontroller
-		arduinoCmdManager.GetPacketManager()->AddClent(&arduinoPort);
-	}
+	// -------------------------------------------------------------------------
 
-	ArduinoDevice * device = arduinoMgr.FindDevice(&arduinoPort); // register device
-
-
-//	uint logDelay = 1000 * 60 * 30;
+	//	uint logDelay = 1000 * 60 * 30;
 	uint logDelay = 5;
 	time_t deadline = 0;
-	
-	// -------------------------------------------------------------------------
-
-	//CServer server(SERVER_PORT);
-
-	// -------------------------------------------------------------------------
-
-	CCommandManager netCmdManager(new CNetPacket());
-	netCmdManager.RegisterHandler(new ClientGetGUIDResponse());
-
-	CTcpSocket serverSocket;
-	serverSocket.Connect("127.0.0.1", SERVER_PORT);
-	netCmdManager.GetPacketManager()->AddClent(&serverSocket);
-
-	// -------------------------------------------------------------------------
-
 	bool readFlag = false;
 
 	/*
@@ -176,15 +109,15 @@ int main()
 // 	arduinoCmdManager.SendCommand(&arduinoPort, CMD_READ_EEPROM, &args, sizeof(args));
 	
 
-	arduinoCmdManager.SendCommand(&arduinoPort, CMD_REQUEST_ONE_WIRE_ENUM, NULL, 0);
+//	arduinoCmdManager.SendCommand(&arduinoPort, CMD_REQUEST_ONE_WIRE_ENUM, NULL, 0);
 	
 	while (true)
 	{
 		server.OnUpdate();
-		netCmdManager.OnUpdate();
-		arduinoCmdManager.OnUpdate();
+		client.OnUpdate();
+		
 		System::SleepMS(100);
-
+		/*
 		if (false == readFlag)
 		{
 			if (true == device->IsOneWireEnumerated())
@@ -193,8 +126,8 @@ int main()
 				readFlag = true;
 
 				// test "turn on relay"
-				byte data[] = { 4, 0 };
-				arduinoCmdManager.SendCommand(&arduinoPort, CMD_PIN_WRITE, &data, sizeof(data));
+				//byte data[] = { 4, 0 };
+				//arduinoCmdManager.SendCommand(&arduinoPort, CMD_PIN_WRITE, &data, sizeof(data));
 			}
 		}
 
@@ -213,6 +146,7 @@ int main()
 					OneWireAddr::ADDR_LEN);
 			}
 		}
+		*/
 	}
 
 //	comPort.Close();

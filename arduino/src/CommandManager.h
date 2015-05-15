@@ -75,7 +75,7 @@ public:
 
 	bool ReadEEPROM()
 	{
-		//if (2 != ByteCount())
+		if (2 != ByteCount())
 		{
 			InvalidateBytes();
 			return false;
@@ -162,8 +162,16 @@ public:
 
 	void PushByte(byte value)
 	{
-		m_buffer[m_size] = value;
-		++m_size;
+		if (m_size < MAX_PACK_SIZE)
+		{
+			m_buffer[m_size] = value;
+			++m_size;
+		}
+		else
+		{
+			byte err = 0xFF;
+			SerialCommand::Send(RSP_INVALID_CMD, &err, 0);
+		}
 	}
 
 	byte PopByte()
@@ -211,6 +219,7 @@ public:
 				OnCommand(m_cmdID);
 
 				// prepare for next
+				InvalidateBytes();
 				m_waitingForData = true;
 				m_targetSize = 2;
 			}

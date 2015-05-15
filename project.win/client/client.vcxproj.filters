@@ -72,6 +72,9 @@
     <ClInclude Include="..\..\source\Server\SensorManager.h">
       <Filter>Source\Server</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\Client.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\submodules\CodeBase\network\tcp_socket\tcp_socket.cpp">
@@ -97,6 +100,9 @@
     </ClCompile>
     <ClCompile Include="..\..\source\Server\Sensor.cpp">
       <Filter>Source\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\Client.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

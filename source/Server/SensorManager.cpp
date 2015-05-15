@@ -26,7 +26,7 @@ bool CSensorManager::Init(CMySqlClient * dbConn)
 	if (true == m_dataBase->Query(&result, query))
 	{
 		// output table name
-		printf("Sensors:\n");
+		printf("Sensors list (DB)\n");
 
 		CMySqlRow row;
 		while (true == result.GetNextRow(&row))

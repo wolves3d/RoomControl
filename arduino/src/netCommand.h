@@ -1,3 +1,8 @@
+//==============================================================================
+#ifndef __netCommand_h_included__
+#define __netCommand_h_included__
+//==============================================================================
+
 // Config
 #define ANALOG_PIN_COUNT 8
 #define ONE_WIRE_SIGNAL_PIN 10 // (a 4.7K resistor is necessary)
@@ -100,3 +105,7 @@ public:
 };
 
 #endif // #ifndef CLIENT_IMPL
+
+//==============================================================================
+#endif // #ifndef __netCommand_h_included__
+//==============================================================================

@@ -4,6 +4,8 @@
 
 class ArduinoDevice
 {
+	IAbstractSocket * m_comPort;
+
 	// OneWire -----------------------------------------------------------------
 	friend class OneWireEnumBegin;
 	friend class OneWireRomFound;
@@ -18,7 +20,11 @@ class ArduinoDevice
 
 public:
 
-	//ArduinoDevice();
+	ArduinoDevice(IAbstractSocket * socket)
+		: m_comPort(socket)
+	{}
+
+	IAbstractSocket * GetPort() { return m_comPort;  }
 
 	bool IsOneWireEnumerated() const { return m_isOneWireEnumerated; }
 	uint GetOneWireDeviceCount() { return m_owDeviceList.size(); }
@@ -35,6 +41,7 @@ public:
 
 	ArduinoManager();
 	ArduinoDevice * FindDevice(IAbstractSocket * socket, bool failOnNotFound = false);
+	vector <ArduinoDevice *> BuildDeviceList();
 };
 
 

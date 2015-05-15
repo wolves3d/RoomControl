@@ -9,25 +9,24 @@
 #define SERVER_PORT 35999
 
 
-#define COMMAND_HEADER(COMMAND_NAME, COMMAND_ID) \
+#define COMMAND_HEADER(COMMAND_NAME, COMMAND_ID, RESPONSE_ID) \
 	public: \
 	virtual const char * GetName() const { return #COMMAND_NAME; } \
 	virtual uint GetCommandID() const { return COMMAND_ID; } \
+	virtual uint GetResponseID() const { return RESPONSE_ID; }
 
-class GetClientGUID : public ICommandHandler
+
+class GetClientGUID : public INetCommand
 {
-	COMMAND_HEADER(GetClientGUID, CMD_GET_CLIENT_GUID);
-	virtual uint FillData(void * buffer, uint maxByteCount)
+	COMMAND_HEADER(GetClientGUID, CMD_GET_CLIENT_GUID, RSP_GET_CLIENT_GUID);
+
+	virtual uint OnFillData(void * buffer, uint maxByteCount)
 	{
 		printf("server: get client GUID\n");
 		return 0;
 	}
-};
 
-
-class GetClientGUIDResponse : public IResponseHandler
-{
-	HANDLER_HEADER(GetClientGUIDResponse, RSP_GET_CLIENT_GUID)
+	virtual void OnResponse(const byte * data, uint size, IAbstractSocket * socket, CCommandManager * mgr)
 	{
 		printf("server: response - get client GUID\n");
 	}
@@ -49,7 +48,8 @@ class CServer : public INetListenerDelegate
 
 		m_cmdMgr.GetPacketManager()->AddClent(socket);
 
-		m_cmdMgr.SendCommand(socket, &GetClientGUID());
+		GetClientGUID cmd;
+		m_cmdMgr.SendCommand(socket, &cmd);
 	}
 	
 
@@ -60,7 +60,7 @@ public:
 		, m_cmdMgr(new CNetPacket)
 	{
 		m_netListener.Init(port);
-		m_cmdMgr.RegisterHandler(new GetClientGUIDResponse());
+		m_cmdMgr.RegisterHandler(new GetClientGUID());
 
 		m_dataBase.Connect("192.168.0.1", "root", "trust#1sql", "smart_home");
 		m_sensorManager.Init(&m_dataBase);

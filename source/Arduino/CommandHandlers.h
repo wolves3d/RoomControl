@@ -3,7 +3,7 @@
 #define HANDLER_HEADER(HANDLER_NAME, COMMAND_ID) \
 	public: \
 	virtual const char * GetName() const { return #HANDLER_NAME; } \
-	virtual uint GetCommandID() const { return COMMAND_ID; } \
+	virtual uint GetResponseID() const { return COMMAND_ID; } \
 	virtual void OnResponse(const byte * data, uint size, IAbstractSocket * socket, CCommandManager * mgr)
 
 
@@ -133,7 +133,7 @@ class OneWireTemperature : public IResponseHandler
 	}
 };
 
-
+/*
 class ReadEEPROM : public IResponseHandler
 {
 	HANDLER_HEADER(ReadEEPROM, RSP_READ_EEPROM)
@@ -148,6 +148,7 @@ class ReadEEPROM : public IResponseHandler
 		printf("\n");
 	}
 };
+*/
 
 class WriteEEPROM : public IResponseHandler
 {

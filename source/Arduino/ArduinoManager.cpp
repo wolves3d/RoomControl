@@ -37,11 +37,27 @@ ArduinoDevice * ArduinoManager::FindDevice(IAbstractSocket * socket, bool failOn
 		return NULL;
 	}
 
-	ArduinoDevice * newDevice = new ArduinoDevice;
+	ArduinoDevice * newDevice = new ArduinoDevice(socket);
 	m_deviceMap[socket] = newDevice;
 
 	return newDevice;
 }
+
+
+vector <ArduinoDevice *> ArduinoManager::BuildDeviceList()
+{
+	vector <ArduinoDevice *> result;
+
+	DeviceMap::const_iterator it = m_deviceMap.begin();
+	while (m_deviceMap.end() != it)
+	{
+		result.push_back(it->second);
+		++it;
+	}
+
+	return result;
+}
+
 
 
 void ArduinoDevice::ClearOneWireDeviceList()
