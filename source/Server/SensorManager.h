@@ -39,6 +39,7 @@ class CSensorManager
 	uint m_minuteSensorID;
 	uint m_hourSensorID;
 	uint m_daySensorID;
+	uint m_weekDaySensorID;
 	uint m_monthSensorID;
 	uint m_yearSensorID;
 

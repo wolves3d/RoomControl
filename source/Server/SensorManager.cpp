@@ -43,6 +43,7 @@ bool CSensorManager::Init(CMySqlClient * dbConn)
 	m_minuteSensorID = GetSensorIdByPath("minute");
 	m_hourSensorID = GetSensorIdByPath("hour");
 	m_daySensorID = GetSensorIdByPath("day");
+	m_weekDaySensorID = GetSensorIdByPath("weekday");
 	m_monthSensorID = GetSensorIdByPath("month");
 	m_yearSensorID = GetSensorIdByPath("year");
 
@@ -116,6 +117,7 @@ void CSensorManager::UpdateSystemSensors()
 	UpdateSensor(m_minuteSensorID, (float)tmLocal->tm_min);
 	UpdateSensor(m_hourSensorID, (float)tmLocal->tm_hour);
 	UpdateSensor(m_daySensorID, (float)tmLocal->tm_mday);
+	UpdateSensor(m_weekDaySensorID, (float)tmLocal->tm_wday);
 	UpdateSensor(m_monthSensorID, (float)tmLocal->tm_mon + 1);
 	UpdateSensor(m_yearSensorID, (float)tmLocal->tm_year + 1900);
 }
