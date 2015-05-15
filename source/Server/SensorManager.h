@@ -24,6 +24,8 @@ public:
 	uint GetID() const { return m_id; }
 	float GetValue() const { return m_value; }
 	void UpdateValue(float newValue);
+
+	const char * GetPath() const { return m_path.c_str(); }
 };
 
 
@@ -34,9 +36,14 @@ class CSensorManager
 	typedef map <uint, CSensor *> SensorMap;
 	SensorMap m_sensorMap;
 
-	CSensor * m_minuteSensor;
+	uint m_minuteSensorID;
+	uint m_hourSensorID;
+	uint m_daySensorID;
+	uint m_monthSensorID;
+	uint m_yearSensorID;
 
 	CSensor * GetSensor(uint id);
+	uint GetSensorIdByPath(const char * szSensorPath);
 
 public:
 

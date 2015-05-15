@@ -16,11 +16,7 @@ CSensorManager::CSensorManager()
 bool CSensorManager::Init(CMySqlClient * dbConn)
 {
 	m_dataBase = dbConn;
-
-
 	const char query[] = "SELECT * FROM `sensors` WHERE 1";
-
-	const char minutePath[] = "minute";
 
 	CMySqlResult result;
 	if (true == m_dataBase->Query(&result, query))
@@ -39,13 +35,16 @@ bool CSensorManager::Init(CMySqlClient * dbConn)
 
 			CSensor * sensor = new CSensor(sensorID, sensorPath, &value);
 			m_sensorMap[sensorID] = sensor;
-
-			if (sensorPath == minutePath)
-			{
-				m_minuteSensor = sensor;
-			};
 		}
 	}
+
+	// -------------------------------------------------------------------------
+
+	m_minuteSensorID = GetSensorIdByPath("minute");
+	m_hourSensorID = GetSensorIdByPath("hour");
+	m_daySensorID = GetSensorIdByPath("day");
+	m_monthSensorID = GetSensorIdByPath("month");
+	m_yearSensorID = GetSensorIdByPath("year");
 
 	return true;
 }
@@ -64,6 +63,24 @@ CSensor * CSensorManager::GetSensor(uint id)
 }
 
 
+uint CSensorManager::GetSensorIdByPath(const char * szSensorPath)
+{
+	string query = u_string_format("SELECT `id` FROM `sensors` WHERE `path` = '%s'", szSensorPath);
+
+	CMySqlResult result;
+	if (true == m_dataBase->Query(&result, query.c_str()))
+	{
+		CMySqlRow row;
+		if (true == result.GetNextRow(&row))
+		{
+			return row.GetInt(0);
+		}
+	}
+
+	return -1;
+}
+
+
 bool CSensorManager::UpdateSensor(uint id, float newValue)
 {
 	CSensor * sensor = GetSensor(id);
@@ -72,7 +89,10 @@ bool CSensorManager::UpdateSensor(uint id, float newValue)
 		return false;
 
 	if (sensor->GetValue() == newValue)
+	{
+		// Value is actual - early quit
 		return false;
+	}
 	
 	sensor->SetValue(newValue);
 	
@@ -82,7 +102,7 @@ bool CSensorManager::UpdateSensor(uint id, float newValue)
 	query = u_string_format("INSERT INTO `sensor_history` (`sensor_id`, `value`) VALUES (%d, %f)", sensor->GetID(), newValue);
 	m_dataBase->Query(NULL, query.c_str());
 
-	printf("Sensor (id:%d) value updated to %f\n", sensor->GetID(), newValue);
+	printf("Sensor (id:%d, path:%s) value updated to %f\n", sensor->GetID(), sensor->GetPath(), newValue);
 
 	return true;
 }
@@ -93,13 +113,9 @@ void CSensorManager::UpdateSystemSensors()
 	time_t now = time(NULL);
 	tm * tmLocal = localtime(&now);
 
-	/*
-	tmLocal->tm_year + 1900,
-	tmLocal->tm_mon + 1,
-	tmLocal->tm_mday,
-	tmLocal->tm_hour,
-	tmLocal->tm_min,
-	*/
-
-	UpdateSensor(m_minuteSensor->GetID(), (float)tmLocal->tm_min);
+	UpdateSensor(m_minuteSensorID, (float)tmLocal->tm_min);
+	UpdateSensor(m_hourSensorID, (float)tmLocal->tm_hour);
+	UpdateSensor(m_daySensorID, (float)tmLocal->tm_mday);
+	UpdateSensor(m_monthSensorID, (float)tmLocal->tm_mon + 1);
+	UpdateSensor(m_yearSensorID, (float)tmLocal->tm_year + 1900);
 }
