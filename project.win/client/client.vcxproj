@@ -15,6 +15,7 @@
     <ClInclude Include="..\..\source\Arduino\ArduinoManager.h" />
     <ClInclude Include="..\..\source\Arduino\CommandHandlers.h" />
     <ClInclude Include="..\..\source\Client.h" />
+    <ClInclude Include="..\..\source\Client\EEPROM.h" />
     <ClInclude Include="..\..\source\NetPacket.h" />
     <ClInclude Include="..\..\source\pch.h" />
     <ClInclude Include="..\..\source\Server\MySqlClient.h" />

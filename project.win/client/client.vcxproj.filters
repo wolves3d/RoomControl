@@ -25,6 +25,9 @@
     <Filter Include="Source\Server">
       <UniqueIdentifier>{9312f060-d9aa-4276-b94d-286df9f4ef12}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Client">
+      <UniqueIdentifier>{ea67a643-d468-486a-8e77-7e29304adfc6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\submodules\CodeBase\network\tcp_socket\tcp_socket.h">
@@ -74,6 +77,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\Client.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Client\EEPROM.h">
+      <Filter>Source\Client</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
