@@ -10,7 +10,8 @@ class CommandManager
 	byte m_targetSize;
 
 	byte m_cmdID;
-	bool m_waitingForData;
+	byte m_cmdTag;
+	bool m_waitingForRequest;
 
 
 public:
@@ -18,13 +19,13 @@ public:
 		: m_writeOffset(0)
 		, m_readOffset(0)
 		, m_size(0)
-		, m_targetSize(2)
-		, m_waitingForData(true)
 	{
+		WaitForRequest();
 	}
 
 	bool PinWrite()
 	{
+		byte pinPrefix = PopByte();
 		byte pinID = PopByte();
 		byte pinValue = PopByte();
 
@@ -56,7 +57,7 @@ public:
 		if (false == oneWire.ReadTemperatureData(sensorData, resBuffer, OneWireAddr::DATA_LEN))
 			return false;
 
-		SerialCommand::Send(RSP_OW_TEMP_SENSOR_DATA, resBuffer, (OneWireAddr::ADDR_LEN + OneWireAddr::DATA_LEN));
+		SerialCommand::Send(RSP_OW_TEMP_SENSOR_DATA, m_cmdTag, resBuffer, (OneWireAddr::ADDR_LEN + OneWireAddr::DATA_LEN));
 		return true;
 	}
 
@@ -96,7 +97,7 @@ public:
 			resBuffer[i] = EEPROM.read(offset + i);
 		}
 		
-		SerialCommand::Send(RSP_READ_EEPROM, resBuffer, count);
+		SerialCommand::Send(RSP_READ_EEPROM, m_cmdTag, resBuffer, count);
 		return true;
 	}
 
@@ -116,7 +117,7 @@ public:
 						EEPROM.write(offset + i, PopByte());
 					}
 
-					SerialCommand::Send(RSP_WRITE_EEPROM, &count, 1);
+					SerialCommand::Send(RSP_WRITE_EEPROM, m_cmdTag, &count, 1);
 					return true;
 				}
 			}
@@ -126,11 +127,11 @@ public:
 		return false;
 	}
 
-	void OnCommand(byte cmdID)
+	void OnCommand()
 	{
 		bool succeedFlag = false;
 
-		switch (cmdID)
+		switch (m_cmdID)
 		{
 		case CMD_PIN_WRITE: succeedFlag = PinWrite(); break;
 		case CMD_REQUEST_ONE_WIRE_ENUM: succeedFlag = oneWire.Enumerate(); break;
@@ -140,13 +141,13 @@ public:
 		case CMD_WRITE_EEPROM: succeedFlag = WriteEEPROM(); break;
 
 		default:
-			SerialCommand::Send(RSP_INVALID_CMD, (byte *)&cmdID, 2);
+			SerialCommand::Send(RSP_INVALID_CMD, m_cmdTag, (byte *)&m_cmdID, 2);
 			return;
 		}
 
 		if (false == succeedFlag)
 		{
-			SerialCommand::Send(RSP_INVALID_REQUEST, (byte *)&cmdID, 2);
+			OnRequestFailed();
 		}
 	}
 
@@ -170,7 +171,7 @@ public:
 		else
 		{
 			byte err = 0xFF;
-			SerialCommand::Send(RSP_INVALID_CMD, &err, 0);
+			SerialCommand::Send(RSP_INVALID_CMD, 0, &err, 0);
 		}
 	}
 
@@ -202,26 +203,25 @@ public:
 			PushByte(Serial.read());
 		}
 
-		if (ByteCount() >= m_targetSize)
+		if (ByteCount() >= m_targetSize) // Is input buffer filled?
 		{
-			if (true == m_waitingForData)
-			{
-				// command recieved
-				m_cmdID = PopByte();
+			bool readyToCallCommand = (false == m_waitingForRequest);
 
-				// command argument size
-				m_targetSize = PopByte();
-				m_waitingForData = false;
+			if (true == m_waitingForRequest)
+			{
+				m_waitingForRequest = false;
+
+				m_cmdID = PopByte();		// Get command ID
+				m_cmdTag = PopByte();		// Get command tag
+				m_targetSize = PopByte();	// Get argument size
+
+				readyToCallCommand = (0 == m_targetSize);
 			}
-			else
-			{
-				// ready to call command
-				OnCommand(m_cmdID);
 
-				// prepare for next
-				InvalidateBytes();
-				m_waitingForData = true;
-				m_targetSize = 2;
+			if (true == readyToCallCommand)
+			{
+				OnCommand();
+				WaitForRequest();
 			}
 		}
 
@@ -232,5 +232,19 @@ public:
 			OneWireAddr ow_blob;
 			oneWire.GetNextAddr(&ow_blob);
 		}
+	}
+
+	void WaitForRequest()
+	{
+		m_cmdID = CMD_NOP;
+		m_cmdTag = 0;
+		m_targetSize = 3;
+		m_waitingForRequest = true;
+		InvalidateBytes();
+	}
+
+	void OnRequestFailed()
+	{
+		SerialCommand::Send(RSP_INVALID_REQUEST, m_cmdTag, (byte *)&m_cmdID, 2);
 	}
 };

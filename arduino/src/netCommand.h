@@ -50,6 +50,7 @@ class CSerialPacket : public ITransportPacket
 	struct PacketHeader
 	{
 		byte	cmdID;			// Уникальный идентификатор команды
+		byte	cmdTag;
 		byte	dataByteCount;	// Размер аргумента команды
 	};
 
@@ -67,7 +68,7 @@ public:
 
 	virtual bool CheckPacket(const void * packet, uint byteCount) { return false; }
 
-	virtual void FillHeader(void * dst, uint cmdID, uint byteCount)
+	virtual void FillHeader(void * dst, uint cmdID, uint cmdTag, uint byteCount)
 	{
 		if (NULL == dst)
 			return;
@@ -75,6 +76,7 @@ public:
 		PacketHeader * header = (PacketHeader *)dst;
 
 		header->cmdID = cmdID;
+		header->cmdTag = cmdTag;
 		header->dataByteCount = byteCount;
 
 		// FIXME: add CRC checksums here!
@@ -84,6 +86,11 @@ public:
 	{
 		return ((PacketHeader *)packetBytes)->cmdID;
 	}
+
+	virtual uint GetCommandTag(const void * packetBytes)
+	{
+		return ((PacketHeader *)packetBytes)->cmdTag;
+	}
 };
 
 #else
@@ -92,9 +99,10 @@ class SerialCommand
 {
 public:
 
-	static void Send(uint16_t cmdID, byte * data, byte count)
+	static void Send(uint16_t cmdID, byte cmdTag, byte * data, byte count)
 	{
 		Serial.write((byte *)&cmdID, 1);
+		Serial.write((byte *)&cmdTag, 1);
 		Serial.write((byte *)&count, 1);
 
 		if (count > 0)

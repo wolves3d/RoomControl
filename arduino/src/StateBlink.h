@@ -52,7 +52,7 @@ public:
 		if (true == m_secondAlarm.CheckAlarm())
 		{
 			m_workTime++;
-			SerialCommand::Send(RSP_PING, (byte *)&m_workTime, 2);
+			SerialCommand::Send(RSP_PING, 0, (byte *)&m_workTime, 2);
 
 			pinMode(STATE_LED, OUTPUT);
 			digitalWrite(STATE_LED, HIGH);
