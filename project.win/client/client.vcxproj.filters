@@ -28,9 +28,6 @@
     <Filter Include="Source\Client">
       <UniqueIdentifier>{ea67a643-d468-486a-8e77-7e29304adfc6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\NetProtocol">
-      <UniqueIdentifier>{316bba93-f337-4b23-b28d-027f09cf3268}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\submodules\CodeBase\network\tcp_socket\tcp_socket.h">
@@ -84,9 +81,6 @@
     <ClInclude Include="..\..\source\Client\Client.h">
       <Filter>Source\Client</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\Client\ClientCommands.h">
-      <Filter>Source\Client</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\Arduino\ArduinoDevice.h">
       <Filter>Source\Arduino</Filter>
     </ClInclude>
@@ -104,6 +98,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\NetProtocol.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Client\ClientRequests.h">
+      <Filter>Source\Client</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -143,9 +140,6 @@
     <ClCompile Include="..\..\source\Client\Client.cpp">
       <Filter>Source\Client</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\NetProtocol\Handshake.cpp">
-      <Filter>Source\NetProtocol</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\Arduino\ArduinoDevice.cpp">
       <Filter>Source\Arduino</Filter>
     </ClCompile>
@@ -160,6 +154,9 @@
     </ClCompile>
     <ClCompile Include="..\..\source\Arduino\ArduinoRequests.cpp">
       <Filter>Source\Arduino</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\Client\ClientRequests.cpp">
+      <Filter>Source\Client</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

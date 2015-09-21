@@ -17,7 +17,7 @@
     <ClInclude Include="..\..\source\Arduino\ArduinoRequests.h" />
     <ClInclude Include="..\..\source\Arduino\CommandHandlers.h" />
     <ClInclude Include="..\..\source\Client\Client.h" />
-    <ClInclude Include="..\..\source\Client\ClientCommands.h" />
+    <ClInclude Include="..\..\source\Client\ClientRequests.h" />
     <ClInclude Include="..\..\source\Client\ClientResponses.h" />
     <ClInclude Include="..\..\source\NetPacket.h" />
     <ClInclude Include="..\..\source\NetProtocol.h" />
@@ -43,9 +43,9 @@
     </ClCompile>
     <ClCompile Include="..\..\source\Arduino\ArduinoRequests.cpp" />
     <ClCompile Include="..\..\source\Client\Client.cpp" />
+    <ClCompile Include="..\..\source\Client\ClientRequests.cpp" />
     <ClCompile Include="..\..\source\Client\ClientResponses.cpp" />
     <ClCompile Include="..\..\source\main.cpp" />
-    <ClCompile Include="..\..\source\NetProtocol\Handshake.cpp" />
     <ClCompile Include="..\..\source\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>

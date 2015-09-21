@@ -15,7 +15,7 @@
 
 #include "Arduino/ArduinoRequests.h"
 
-#include "ClientCommands.h"
+#include "ClientRequests.h"
 #include "ClientResponses.h"
 
 
