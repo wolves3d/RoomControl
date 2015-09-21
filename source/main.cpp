@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Client.h"
+#include "Client/Client.h"
 
 #define CURL_STATICLIB
 #include <curl/curl.h>
@@ -103,10 +103,6 @@ int main()
 	byte args[] = { 0, 8, 0, 1, 2, 3, 4, 5, 6, 7 };
 	g_commMgr->PushCommand(CMD_WRITE_EEPROM, &args, sizeof(args));
 	*/
-
-	
-// 	byte args[] = { 0, 8 };
-// 	arduinoCmdManager.SendCommand(&arduinoPort, CMD_READ_EEPROM, &args, sizeof(args));
 	
 
 //	arduinoCmdManager.SendCommand(&arduinoPort, CMD_REQUEST_ONE_WIRE_ENUM, NULL, 0);
