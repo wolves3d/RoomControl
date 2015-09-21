@@ -1,6 +1,5 @@
 #include "pch.h"
-#include "MySqlClient.h"
-#include "SensorManager.h"
+#include "Server.h"
 #include <time.h>
 
 
@@ -40,6 +39,7 @@ bool CSensorManager::Init(CMySqlClient * dbConn)
 
 	// -------------------------------------------------------------------------
 
+	m_secSensorID = GetSensorIdByPath("second");
 	m_minuteSensorID = GetSensorIdByPath("minute");
 	m_hourSensorID = GetSensorIdByPath("hour");
 	m_daySensorID = GetSensorIdByPath("day");
@@ -95,7 +95,10 @@ bool CSensorManager::UpdateSensor(uint id, float newValue)
 		return false;
 	}
 	
+	// update memory record
 	sensor->SetValue(newValue);
+	
+	// update data base record -------------------------------------------------
 	
 	string query = u_string_format("UPDATE `sensors` SET `numeric_val` = %f WHERE `id` = %d", newValue, sensor->GetID());
 	m_dataBase->Query(NULL, query.c_str());
@@ -104,6 +107,31 @@ bool CSensorManager::UpdateSensor(uint id, float newValue)
 	m_dataBase->Query(NULL, query.c_str());
 
 	printf("Sensor (id:%d, path:%s) value updated to %f\n", sensor->GetID(), sensor->GetPath(), newValue);
+	
+	// send client command -----------------------------------------------------
+
+	const char * sensorPath = sensor->GetPath();
+
+	// FIXME: hack
+	if (sensorPath == strstr(sensorPath, "arduino"))
+	{
+		// FIXME: hack
+		const char *pinName = strstr(sensorPath, "/pin/");
+		if (NULL != pinName)
+		{
+			pinName += 5;
+
+			// FIXME: hack
+			IAbstractSocket * socket = g_server->GetArduinoSocket((const byte *)"\x0\x1\x2\x3\x4\x5\x6\x7", 8);
+			if (NULL != socket)
+			{
+				SetPinValue pinSetter(pinName, (byte)sensor->GetValue());
+
+				CCommandManager * cmdMgr = g_server->GetCommandManager();
+				cmdMgr->SendCommand(socket, &pinSetter);
+			}
+		}
+	}
 
 	return true;
 }
@@ -114,6 +142,7 @@ void CSensorManager::UpdateSystemSensors()
 	time_t now = time(NULL);
 	tm * tmLocal = localtime(&now);
 
+	UpdateSensor(m_secSensorID, (float)tmLocal->tm_sec);
 	UpdateSensor(m_minuteSensorID, (float)tmLocal->tm_min);
 	UpdateSensor(m_hourSensorID, (float)tmLocal->tm_hour);
 	UpdateSensor(m_daySensorID, (float)tmLocal->tm_mday);

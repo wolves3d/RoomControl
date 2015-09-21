@@ -1,9 +1,15 @@
 #include "NetListener.h"
 #include "../NetPacket.h"
+#include "NetProtocol/NetProtocol.h"
+//#include "Arduino/CommandHandlers.h"
 
 
 #include "MySqlClient.h"
 #include "SensorManager.h"
+#include "RuleManager.h"
+
+#include "ServerRequests.h"
+#include "ServerResponses.h"
 
 
 #define SERVER_PORT 35999
@@ -22,13 +28,13 @@ class GetClientGUID : public INetCommand
 
 	virtual uint OnFillData(void * buffer, uint maxByteCount)
 	{
-		printf("server: get client GUID\n");
+		printf("server: request client GUID\n");
 		return 0;
 	}
 
 	virtual void OnResponse(const byte * data, uint size, IAbstractSocket * socket, CCommandManager * mgr)
 	{
-		printf("server: response - get client GUID\n");
+		printf("server: response - got client GUID\n");
 	}
 };
 
@@ -39,6 +45,7 @@ class CServer : public INetListenerDelegate
 	CCommandManager m_cmdMgr;
 	CMySqlClient m_dataBase;
 	CSensorManager m_sensorManager;
+	CRuleManager m_ruleManager;
 
 	virtual void OnClientConnected(CTcpSocket * socket)
 	{
@@ -48,34 +55,40 @@ class CServer : public INetListenerDelegate
 
 		m_cmdMgr.GetPacketManager()->AddClent(socket);
 
-		GetClientGUID cmd;
-		m_cmdMgr.SendCommand(socket, &cmd);
+//		GetClientGUID cmd;
+//		m_cmdMgr.SendCommand(socket, &cmd);
 	}
 	
 
 public:
 
-	CServer(int port)
-		: m_netListener(this)
-		, m_cmdMgr(new CNetPacket)
-	{
-		m_netListener.Init(port);
-		m_cmdMgr.RegisterHandler(new GetClientGUID());
-
-		m_dataBase.Connect("192.168.0.1", "root", "trust#1sql", "smart_home");
-		m_sensorManager.Init(&m_dataBase);
-	}
+	CServer(int port);
 
 	void OnUpdate()
 	{
 		m_sensorManager.UpdateSystemSensors();
+		m_ruleManager.OnUpdate();
 
 		m_cmdMgr.OnUpdate();
 		m_netListener.OnUpdate();
 	}
 
+	CMySqlClient * GetDB() { return &m_dataBase; }
+	CCommandManager * GetCommandManager() { return &m_cmdMgr; }
+
 	void OnShutdown()
 	{
 		m_netListener.Shutdown();
 	}
+
+	void AddArduinoRecord(const byte * UID, size_t uidSize, IAbstractSocket * socket);
+	IAbstractSocket * GetArduinoSocket(const byte * UID, size_t uidSize);
+
+private:
+
+	typedef map <string, IAbstractSocket *> ArduinoSocketMap;
+	ArduinoSocketMap m_arduinoSockets;
 };
+
+
+extern CServer * g_server;

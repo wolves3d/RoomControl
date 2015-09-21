@@ -8,24 +8,34 @@
 class CMySqlClient;
 
 
-class CSensor
+struct ISensor
 {
-	friend class CSensorManager;
-	uint m_id;
+	virtual float GetValue() const = 0;
+	virtual size_t GetID() const = 0;
+};
+
+
+class CSensor : public ISensor
+{
+friend class CSensorManager;
+
+public:
+
+	// ISensor
+	virtual float GetValue() const { return m_value; }
+	virtual size_t GetID() const { return m_id; }
+
+	CSensor(uint id, const string & path, const float * optValue = NULL);
+
+	void UpdateValue(float newValue);
+	const char * GetPath() const { return m_path.c_str(); }
+
+private:
+	size_t m_id;
 	string m_path;
 	float m_value;
 
 	void SetValue(float newVal) { m_value = newVal; }
-
-public:
-
-	CSensor(uint id, const string & path, const float * optValue = NULL);
-
-	uint GetID() const { return m_id; }
-	float GetValue() const { return m_value; }
-	void UpdateValue(float newValue);
-
-	const char * GetPath() const { return m_path.c_str(); }
 };
 
 
@@ -36,6 +46,7 @@ class CSensorManager
 	typedef map <uint, CSensor *> SensorMap;
 	SensorMap m_sensorMap;
 
+	uint m_secSensorID;
 	uint m_minuteSensorID;
 	uint m_hourSensorID;
 	uint m_daySensorID;
@@ -43,7 +54,6 @@ class CSensorManager
 	uint m_monthSensorID;
 	uint m_yearSensorID;
 
-	CSensor * GetSensor(uint id);
 	uint GetSensorIdByPath(const char * szSensorPath);
 
 public:
@@ -52,6 +62,8 @@ public:
 	bool Init(CMySqlClient * dbConn);
 	void UpdateSystemSensors();
 	bool UpdateSensor(uint id, float newValue);
+
+	CSensor * GetSensor(uint id);
 };
 
 
