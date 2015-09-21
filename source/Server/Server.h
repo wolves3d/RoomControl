@@ -1,6 +1,6 @@
 #include "NetListener.h"
 #include "../NetPacket.h"
-#include "NetProtocol/NetProtocol.h"
+#include "NetProtocol.h"
 //#include "Arduino/CommandHandlers.h"
 
 

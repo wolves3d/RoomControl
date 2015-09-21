@@ -159,6 +159,8 @@ CClient::CClient()
 		readROM->SetCallback(SEL_Response(&CClient::OnArduinoUID), this, NULL);
 		m_arduinoCmdManager.SendCommand(arduinoPort, readROM);
 
+//		m_arduinoCmdManager.SendCommand()
+
 		//m_arduinoCmdManager.SendCommand(arduinoPort, CMD_REQUEST_ONE_WIRE_ENUM, NULL, 0);
 	}
 }

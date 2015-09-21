@@ -11,7 +11,7 @@
 #include "Arduino/CommandHandlers.h"
 
 #include "Server/Server.h"
-#include "NetProtocol/NetProtocol.h"
+#include "NetProtocol.h"
 
 #include "Arduino/ArduinoRequests.h"
 

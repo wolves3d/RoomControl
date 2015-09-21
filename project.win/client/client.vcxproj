@@ -20,7 +20,7 @@
     <ClInclude Include="..\..\source\Client\ClientCommands.h" />
     <ClInclude Include="..\..\source\Client\ClientResponses.h" />
     <ClInclude Include="..\..\source\NetPacket.h" />
-    <ClInclude Include="..\..\source\NetProtocol\NetProtocol.h" />
+    <ClInclude Include="..\..\source\NetProtocol.h" />
     <ClInclude Include="..\..\source\pch.h" />
     <ClInclude Include="..\..\source\Server\MySqlClient.h" />
     <ClInclude Include="..\..\source\Server\RuleManager.h" />

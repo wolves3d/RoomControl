@@ -84,9 +84,6 @@
     <ClInclude Include="..\..\source\Client\Client.h">
       <Filter>Source\Client</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\NetProtocol\NetProtocol.h">
-      <Filter>Source\NetProtocol</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\Client\ClientCommands.h">
       <Filter>Source\Client</Filter>
     </ClInclude>
@@ -104,6 +101,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\Arduino\ArduinoRequests.h">
       <Filter>Source\Arduino</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\NetProtocol.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
