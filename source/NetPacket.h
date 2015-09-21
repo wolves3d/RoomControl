@@ -1,15 +1,5 @@
 
 
-enum ENetCommandID
-{
-	CMD_GET_CLIENT_GUID = 1,
-	RSP_GET_CLIENT_GUID = 2,
-
-	CMD_SET_CLIENT_GUID = 3,
-	RSP_SET_CLIENT_GUID = 4,
-
-	NET_TABLE_SIZE	// must be at end of enum
-};
 
 
 class CNetPacket : public ITransportPacket
@@ -44,7 +34,7 @@ public:
 		return false;
 	}
 
-	virtual void FillHeader(void * dst, uint cmdID, uint byteCount)
+	virtual	void FillHeader(void * dst, uint cmdID, uint cmdTag, uint byteCount)
 	{
 		if (NULL == dst)
 			return;
@@ -60,5 +50,10 @@ public:
 	virtual uint GetCommandID(const void * packetBytes)
 	{
 		return ((PacketHeader *)packetBytes)->cmdID;
+	}
+
+	virtual uint GetCommandTag(const void * packetBytes)
+	{
+		return 0;//
 	}
 };
