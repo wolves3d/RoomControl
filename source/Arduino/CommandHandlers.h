@@ -1,10 +1,5 @@
 
 
-#define HANDLER_HEADER(HANDLER_NAME, COMMAND_ID) \
-	public: \
-	virtual const char * GetName() const { return #HANDLER_NAME; } \
-	virtual uint GetResponseID() const { return COMMAND_ID; } \
-	virtual void OnResponse(const byte * data, uint size, IAbstractSocket * socket, CCommandManager * mgr)
 
 
 
@@ -13,7 +8,7 @@ class PingResponse : public IResponseHandler
 	HANDLER_HEADER(PingResponse, RSP_PING)
 	{
 		int workTime = *((short *)data);
-		printf("ping %d sec\n", workTime);
+		//printf("ping %d sec\n", workTime);
 	}
 };
 

@@ -57,31 +57,3 @@ vector <ArduinoDevice *> ArduinoManager::BuildDeviceList()
 
 	return result;
 }
-
-
-
-void ArduinoDevice::ClearOneWireDeviceList()
-{
-	m_isOneWireEnumerated = false;
-	m_owDeviceList.clear();
-
-	printf("RSP: 1wire enum begin\n");
-}
-
-
-void ArduinoDevice::AddOneWireDevice(OneWireAddr deviceAddr)
-{
-	m_owDeviceList.push_back(deviceAddr);
-}
-
-
-const OneWireAddr & ArduinoDevice::GetOneWireDevice(uint device)
-{
-	return m_owDeviceList[device];
-}
-
-void ArduinoDevice::OnOneWireEnumerated()
-{
-	m_isOneWireEnumerated = true;
-	printf("RSP: 1wire enumerated!\n");
-}
