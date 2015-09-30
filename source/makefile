@@ -8,8 +8,10 @@ Client/ClientRequests.cpp \
 Client/ClientResponses.cpp
 
 INCLUDES=-I./ \
+-I../common -I../submodules \
 -I../common -I../thirdparty/curl/include \
--I../common -I../submodules
+-I../common -I../thirdparty/mysql/include
+
 
 EXECUTABLE=hello
 
