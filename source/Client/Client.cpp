@@ -47,103 +47,30 @@ struct ArduinoDeviceEnumeration : ICallback
 	{
 		printf("client: all arduino devices enumerated!\n");
 
-		OnClientGUIDReady cmd;
-		CCommandManager * mgr = g_client->GetServer();
-		mgr->SendCommand(g_client->GetServerSocket(), &cmd);
+// 		OnClientGUIDReady cmd;
+// 		CCommandManager * mgr = g_client->GetServer();
+// 		mgr->SendCommand(g_client->GetServerSocket(), &cmd);
 	}
 };
-
-
-class ClientGetGUIDResponse
-	: public IResponseHandler
-	, public ICallback
-{
-	struct HubDesc
-	{
-		uint expectedResponseCount;
-		IAbstractSocket * requestingSocket;
-		// GUID
-	};
-
-	HANDLER_HEADER(ClientGetGUIDResponse, CMD_GET_CLIENT_GUID)
-	{
-		printf("client: got request form server: get client GUID\n");
-
-		vector <ArduinoDevice *> deviceList = g_arduinoManager->BuildDeviceList();
-		const uint deviceCount = deviceList.size();
-
-		printf("\tarduino device count: %d\n", deviceCount);
-
-		if (0 == deviceCount)
-		{
-			//mgr->SendCommand(socket, RSP_GET_CLIENT_GUID, "NULL", 4);
-			return;
-		}
-
-		printf("\t1-wire enumeration engaged\n");
-
-		HubDesc * hubDesc = new HubDesc;
-		hubDesc->expectedResponseCount = deviceCount;
-		hubDesc->requestingSocket = socket; // FIXME: may die, need hard link with socket
-		// Set timeOut for next commands here
-
-		//ArduinoDeviceEnumeration * enumCallback = new ArduinoDeviceEnumeration(deviceCount, mgr);
-
-		for (uint i = 0; i < deviceCount; ++i)
-		{
-			ArduinoDevice * device = deviceList[i];
-
-			ArduinoReadEEPROM * command = new ArduinoReadEEPROM(0, 8);
-			command->SetCallback(this, hubDesc);
-
-			g_arduinoCmdManager->SendCommand(device->GetPort(), command);
-		}
-	}
-
-	virtual bool CallBack(const byte * data, uint size, IAbstractSocket * socket, CCommandManager * mgr, void * userArg)
-	{
-		HubDesc * hubDesc = (HubDesc *)userArg;
-
-		--(hubDesc->expectedResponseCount);
-
-		//ArduinoDevice->SetGUID
-		//Fill device desc (1-wire)
-
-		if (0 == hubDesc->expectedResponseCount)
-		{
-			//CMD_GET_CLIENT_GUID
-			//g_client->GetServer()->SendCommand()
-
-			//mgr->SendCommand(socket, RSP_GET_CLIENT_GUID, "VOVA", 4);
-
-			delete hubDesc;
-			return true;
-		}
-
-		return false;
-	}
-};
-
 
 
 CClient::CClient()
-	: m_cmdManager(new CNetPacket())
-	, m_arduinoCmdManager(new CSerialPacket)
+	: m_cmdManager(new CNetPacket(), false)
+	, m_arduinoCmdManager(new CSerialPacket, true)
+	, m_nextUpdate(0)
 {
 	g_client = this;
 	g_arduinoCmdManager = &m_arduinoCmdManager;
 
 	// FIXME: memory leak, no free on destruct
+	m_arduinoCmdManager.RegisterHandler(new ArduinoInvalidRequest());
 	m_arduinoCmdManager.RegisterHandler(new OneWireEnumBegin());
 	m_arduinoCmdManager.RegisterHandler(new OneWireRomFound());
 	m_arduinoCmdManager.RegisterHandler(new OneWireEnumEnd());
-	m_arduinoCmdManager.RegisterHandler(new OneWireTemperature());
 	m_arduinoCmdManager.RegisterHandler(new PingResponse());
-//	m_arduinoCmdManager.RegisterHandler(new ReadEEPROM());
 	m_arduinoCmdManager.RegisterHandler(new WriteEEPROM());
 
 
-	m_cmdManager.RegisterHandler(new ClientGetGUIDResponse());
 	m_cmdManager.RegisterHandler(new OnSetPinValue());
 
 
@@ -155,13 +82,13 @@ CClient::CClient()
 
 		ArduinoDevice * device = m_arduinoMgr.FindDevice(arduinoPort); // register device
 
+
 		INetCommand * readROM = new ArduinoReadEEPROM(0, 8);
 		readROM->SetCallback(SEL_Response(&CClient::OnArduinoUID), this, NULL);
 		m_arduinoCmdManager.SendCommand(arduinoPort, readROM);
 
-//		m_arduinoCmdManager.SendCommand()
-
-		//m_arduinoCmdManager.SendCommand(arduinoPort, CMD_REQUEST_ONE_WIRE_ENUM, NULL, 0);
+		
+		m_arduinoCmdManager.SendCommand(arduinoPort, new ArduinoEnumerateOneWire);
 	}
 }
 
@@ -178,6 +105,51 @@ void CClient::OnUpdate()
 {
 	m_arduinoCmdManager.OnUpdate();
 	m_cmdManager.OnUpdate();
+
+	if (GetTickCount() >= m_nextUpdate)
+	{
+		OnEverySecondUpdate();
+	}
+}
+
+
+void CClient::OnEverySecondUpdate()
+{
+	m_nextUpdate = GetTickCount() + 1000;
+
+	//return;
+	printf("OnEverySecondUpdate\n");
+
+	ArduinoVector deviceList = m_arduinoMgr.BuildDeviceList();
+	for (uint i = 0; i < deviceList.size(); ++i)
+	{
+		ArduinoDevice * arduino = deviceList[i];
+		for (uint k = 0; k < arduino->GetOneWireDeviceCount(); ++k)
+		{
+			const OneWireAddr &addr = arduino->GetOneWireDevice(k);
+
+			ArduinoReadOneWire *tempReader = NEW ArduinoReadOneWire(addr);
+			tempReader->SetCallback(SEL_Response(&CClient::OnTempSensorUpdated), this, tempReader);
+			m_arduinoCmdManager.SendCommand(arduino->GetPort(), tempReader);
+		}
+	}
+}
+
+
+void CClient::OnTempSensorUpdated(const byte * data, uint size, IResponseHandler * handler, IAbstractSocket * socket, CCommandManager * mgr, void * userArg)
+{
+	ArduinoReadOneWire *tempReader = (ArduinoReadOneWire *)userArg;
+	ArduinoDevice * dev = m_arduinoMgr.FindDevice(socket, true);
+
+	string sensorPath = "arduino/";
+	sensorPath += HexStringFromBytes(dev->GetUID(), ArduinoDevice::UID_SIZE);
+	sensorPath += "/oneWire/";
+	sensorPath += tempReader->GetOneWireAddr().ToString();
+
+	
+	m_cmdManager.SendCommand(
+		&m_serverSocket,
+		new SendSensorData(sensorPath.c_str(), tempReader->GetProbeValue()));
 }
 
 
@@ -188,10 +160,8 @@ void CClient::OnArduinoUID(const byte * data, uint size, IResponseHandler * hand
 	{
 		dev->SetUID(data, size);
 
-		SendClientInfo infoSender;
-
 		m_cmdManager.SendCommand(
 			&m_serverSocket,
-			&infoSender);
+			new SendClientInfo);
 	}
 }

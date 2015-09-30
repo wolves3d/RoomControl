@@ -2,12 +2,14 @@
 
 class CommandManager
 {
-#define MAX_PACK_SIZE 16
+#define MAX_PACK_SIZE 32
 	byte m_buffer[MAX_PACK_SIZE];
 	byte m_writeOffset;
 	byte m_readOffset;
 	byte m_size;
 	byte m_targetSize;
+
+	byte m_writeBuffer[MAX_PACK_SIZE];
 
 	byte m_cmdID;
 	byte m_cmdTag;
@@ -32,32 +34,29 @@ public:
 		pinMode(pinID, OUTPUT);
 		digitalWrite(pinID, pinValue);
 
+		OnEmptyAnswer();
 		return true;
 	}
 
 	bool OneWireReadTempData()
 	{
-		const byte buffSize = OneWireAddr::ADDR_LEN + OneWireAddr::DATA_LEN;
-		byte resBuffer[buffSize];
-		memset(resBuffer, 0, buffSize);
+		const byte buffSize = (OneWireAddr::ADDR_LEN + OneWireAddr::DATA_LEN);
 
-
-		// 		if (false == WaitForData(resBuffer, OneWireAddr::ADDR_LEN))
-		// 			return false;
-
-		// hack objects
-		//OneWireAddr * blob = (OneWireAddr *)resBuffer;
-		byte * sensorData = resBuffer + OneWireAddr::ADDR_LEN;
-
-		for (byte i = 0; i < OneWireAddr::ADDR_LEN; ++i)
-		{
-			resBuffer[i] = PopByte();
-		}
-
-		if (false == oneWire.ReadTemperatureData(sensorData, resBuffer, OneWireAddr::DATA_LEN))
+		if (buffSize >= MAX_PACK_SIZE)
 			return false;
-
-		SerialCommand::Send(RSP_OW_TEMP_SENSOR_DATA, m_cmdTag, resBuffer, (OneWireAddr::ADDR_LEN + OneWireAddr::DATA_LEN));
+		
+		memset(m_writeBuffer, 0, buffSize);
+		for (int i = 0; i < OneWireAddr::ADDR_LEN; ++i)
+		{
+			m_writeBuffer[i] = PopByte();
+		}
+		
+		byte * sensorBuffer = m_writeBuffer + OneWireAddr::ADDR_LEN;
+		
+		if (false == oneWire.ReadTemperatureData(sensorBuffer, m_writeBuffer, OneWireAddr::DATA_LEN))
+			return false;
+			
+		SerialCommand::Send(CMD_OW_READ_TEMP_SENSOR_DATA, m_cmdTag, m_writeBuffer, buffSize);
 		return true;
 	}
 
@@ -97,7 +96,7 @@ public:
 			resBuffer[i] = EEPROM.read(offset + i);
 		}
 		
-		SerialCommand::Send(RSP_READ_EEPROM, m_cmdTag, resBuffer, count);
+		SerialCommand::Send(CMD_READ_EEPROM, m_cmdTag, resBuffer, count);
 		return true;
 	}
 
@@ -198,39 +197,51 @@ public:
 
 	void OnLoop()
 	{
-		if (true == Serial.available())
-		{
-			PushByte(Serial.read());
-		}
-
-		if (ByteCount() >= m_targetSize) // Is input buffer filled?
-		{
-			bool readyToCallCommand = (false == m_waitingForRequest);
-
-			if (true == m_waitingForRequest)
-			{
-				m_waitingForRequest = false;
-
-				m_cmdID = PopByte();		// Get command ID
-				m_cmdTag = PopByte();		// Get command tag
-				m_targetSize = PopByte();	// Get argument size
-
-				readyToCallCommand = (0 == m_targetSize);
-			}
-
-			if (true == readyToCallCommand)
-			{
-				OnCommand();
-				WaitForRequest();
-			}
-		}
-
-		// ------
-
 		if (true == oneWire.IsEnumerating())
 		{
 			OneWireAddr ow_blob;
 			oneWire.GetNextAddr(&ow_blob);
+			return;
+		}
+
+		// ------
+		
+		byte a = Serial.available();
+		g_queueSize = (int)a;
+		/*
+		if (a > 0)
+		{
+			m_writeBuffer[0] = a;
+			m_writeBuffer[1] = 0;
+			SerialCommand::Send(RSP_PING, 0, m_writeBuffer, 2);
+		}
+		*/
+		while (a--)
+		{
+			PushByte(Serial.read());
+
+			if (ByteCount() >= m_targetSize) // Is input buffer filled?
+			{
+				bool readyToCallCommand = (false == m_waitingForRequest);
+
+				if (true == m_waitingForRequest)
+				{
+					m_waitingForRequest = false;
+
+					m_cmdID = PopByte();		// Get command ID
+					m_cmdTag = PopByte();		// Get command tag
+					m_targetSize = PopByte();	// Get argument size
+
+					readyToCallCommand = (0 == m_targetSize);
+				}
+
+				if (true == readyToCallCommand)
+				{
+					OnCommand();
+					WaitForRequest();
+					break;
+				}
+			}
 		}
 	}
 
@@ -245,6 +256,15 @@ public:
 
 	void OnRequestFailed()
 	{
-		SerialCommand::Send(RSP_INVALID_REQUEST, m_cmdTag, (byte *)&m_cmdID, 2);
+		byte buffer[3];
+		memcpy(buffer, &m_cmdID, 2);
+		buffer[2] = m_cmdTag;
+		
+		SerialCommand::Send(RSP_INVALID_REQUEST, 0, buffer, 3);
+	}
+
+	void OnEmptyAnswer()
+	{
+		SerialCommand::Send(m_cmdID, m_cmdTag, 0, 0);
 	}
 };

@@ -158,5 +158,8 @@
     <ClCompile Include="..\..\source\Client\ClientRequests.cpp">
       <Filter>Source\Client</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\Server\LogicOps.cpp">
+      <Filter>Source\Server</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

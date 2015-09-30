@@ -103,7 +103,6 @@ int main()
 	byte args[] = { 0, 8, 0, 1, 2, 3, 4, 5, 6, 7 };
 	g_commMgr->PushCommand(CMD_WRITE_EEPROM, &args, sizeof(args));
 	*/
-	
 
 //	arduinoCmdManager.SendCommand(&arduinoPort, CMD_REQUEST_ONE_WIRE_ENUM, NULL, 0);
 	
@@ -112,7 +111,7 @@ int main()
 		server.OnUpdate();
 		client.OnUpdate();
 		
-		System::SleepMS(100);
+		System::SleepMS(0);
 		/*
 		if (false == readFlag)
 		{

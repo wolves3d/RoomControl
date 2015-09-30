@@ -13,6 +13,8 @@ class SetPinValue : public INetCommand
 	{
 	}
 
+	virtual uint OnFillData(void * buffer, uint maxByteCount);
+
 private:
 	string m_pinName;
 	byte m_pinValue;

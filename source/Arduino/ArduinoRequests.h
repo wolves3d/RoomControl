@@ -1,10 +1,11 @@
 
 
+REQUEST_HANDLER_DECL(ArduinoEnumerateOneWire, CMD_REQUEST_ONE_WIRE_ENUM, NULL);
 
 
 class ArduinoSetPinValue : public INetCommand
 {
-	REQUEST_HANDLER_BODY(ArduinoSetPinValue, CMD_PIN_WRITE, NULL);
+	REQUEST_HANDLER_BODY(ArduinoSetPinValue, CMD_PIN_WRITE, CMD_PIN_WRITE);
 
 	ArduinoSetPinValue(byte pinPrefix, byte pin, byte pinValue)
 		: m_pinPrefix(pinPrefix)
@@ -13,6 +14,9 @@ class ArduinoSetPinValue : public INetCommand
 	{
 	}
 
+	virtual uint OnFillData(void * buffer, uint maxByteCount);
+	virtual void OnResponse(const byte * data, uint size, IAbstractSocket * socket, CCommandManager * mgr);
+
 private:
 	byte m_pinPrefix, m_pin, m_pinValue;
 };
@@ -20,9 +24,7 @@ private:
 
 class ArduinoReadEEPROM : public INetCommand
 {
-	REQUEST_HANDLER_BODY(ArduinoReadEEPROM, CMD_READ_EEPROM, RSP_READ_EEPROM);
-	virtual void OnResponse(const byte * data, uint size, IAbstractSocket * socket, CCommandManager * mgr);
-	//COMMAND_HEADER(ArduinoReadEEPROM, CMD_READ_EEPROM, RSP_READ_EEPROM);
+	REQUEST_HANDLER_BODY(ArduinoReadEEPROM, CMD_READ_EEPROM, CMD_READ_EEPROM);
 
 	ArduinoReadEEPROM(size_t offset, size_t byteCount)
 		: m_offset(offset)
@@ -36,6 +38,8 @@ class ArduinoReadEEPROM : public INetCommand
 		}
 	}
 
+	virtual uint OnFillData(void * buffer, uint maxByteCount);
+	virtual void OnResponse(const byte * data, uint size, IAbstractSocket * socket, CCommandManager * mgr);
 	
 
 private:
@@ -54,5 +58,23 @@ private:
 };
 
 
+class ArduinoReadOneWire : public INetCommand
+{
+	REQUEST_HANDLER_BODY(ArduinoReadOneWire, CMD_OW_READ_TEMP_SENSOR_DATA, CMD_OW_READ_TEMP_SENSOR_DATA);
+	
+	ArduinoReadOneWire(const OneWireAddr &addr)
+		: m_addr(addr.Address())
+		, m_probeValue(0.0f)
+	{
+	}
 
+	const OneWireAddr & GetOneWireAddr() const { return m_addr; }
+	float GetProbeValue() const { return m_probeValue; }
 
+	virtual uint OnFillData(void * buffer, uint maxByteCount);
+	virtual void OnResponse(const byte * data, uint size, IAbstractSocket * socket, CCommandManager * mgr);
+
+private:
+	OneWireAddr m_addr;
+	float m_probeValue;
+};

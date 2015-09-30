@@ -35,6 +35,11 @@ struct OneWireAddr
 		return addr;
 	}
 
+	const byte * Address() const
+	{
+		return addr;
+	}
+
 	byte GetChipID()
 	{
 		return addr[0];
@@ -42,7 +47,7 @@ struct OneWireAddr
 
 #ifdef CLIENT_IMPL
 
-	string ToString()
+	string ToString() const
 	{
 		char buf[128];
 		char * p = buf;
@@ -142,7 +147,7 @@ public:
 			// search done
 			reset_search();
 			m_enumMode = false;
-			SerialCommand::Send(RSP_ONE_WIRE_ENUM_END, 0, 0, 0);
+			SerialCommand::Send(CMD_REQUEST_ONE_WIRE_ENUM, 0, 0, 0);
 		}
 
 		return false;
@@ -183,7 +188,7 @@ public:
 			reset();
 			select(addr);
 			write(0x44, 1); // start conversion, with parasite power on at the end
-			//  delay(750);     // maybe 750ms is enough, maybe not
+		//	 delay(750);     // maybe 750ms is enough, maybe not
 
 			// we might do a ds.depower() here, but the reset will take care of it.
 			//ds.depower();

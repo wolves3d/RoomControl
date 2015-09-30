@@ -15,7 +15,7 @@ void ArduinoDevice::ClearOneWireDeviceList()
 	m_isOneWireEnumerated = false;
 	m_owDeviceList.clear();
 
-	printf("RSP: 1wire enum begin\n");
+	printf("ClearOneWireDeviceList\n");
 }
 
 

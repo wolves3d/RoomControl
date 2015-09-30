@@ -20,3 +20,26 @@ uint SendClientInfo::OnFillData(void * buffer, uint maxByteCount)
 
 	return bytesWritten;
 }
+
+
+uint SendSensorData::OnFillData(void * buffer, uint maxByteCount)
+{
+	DEBUG_ASSERT(m_sensorPath.length() < 0xFF);
+	const byte pathLen = m_sensorPath.length(); // FIXME 256 byte limit
+
+	size_t offset = 0;
+	
+	byte *data = (byte *)buffer;
+
+	float *valuePtr = (float *)data;
+	(*valuePtr) = m_value;
+	offset += sizeof(float);
+
+	byte *stringLenPtr = (byte *)(data + offset);
+	(*stringLenPtr) = pathLen;
+	offset += sizeof(byte);
+
+	memcpy((data + offset), m_sensorPath.c_str(), pathLen);
+	offset += (*stringLenPtr);
+	return offset;
+}

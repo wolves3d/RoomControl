@@ -49,6 +49,7 @@
     <ClCompile Include="..\..\source\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\source\Server\LogicOps.cpp" />
     <ClCompile Include="..\..\source\Server\Rule.cpp" />
     <ClCompile Include="..\..\source\Server\RuleManager.cpp" />
     <ClCompile Include="..\..\source\Server\Sensor.cpp" />

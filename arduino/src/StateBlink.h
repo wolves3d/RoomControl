@@ -17,7 +17,7 @@ public:
 		: m_workTime(0)
 	{
 		SetState(ES_OK);
-		m_secondAlarm.Schedule(1000);
+		m_secondAlarm.Schedule(100);
 	}
 
 	void SetState(EState state)
@@ -29,7 +29,7 @@ public:
 			break;
 
 		case StateBlink::ES_OK:
-			m_blinkDelay = 100;
+			m_blinkDelay = 20;
 			break;
 
 		default:
@@ -40,7 +40,7 @@ public:
 	void OnUpdate()
 	{
 		// Pin 13 has an LED connected on most Arduino boards.
-#define STATE_LED 13
+		#define STATE_LED 13
 
 		if (true == m_toggleLedAlarm.CheckAlarm())
 		{
@@ -52,6 +52,8 @@ public:
 		if (true == m_secondAlarm.CheckAlarm())
 		{
 			m_workTime++;
+
+			//SerialCommand::Send(RSP_PING, 0, (byte *)&g_queueSize, 1);
 			SerialCommand::Send(RSP_PING, 0, (byte *)&m_workTime, 2);
 
 			pinMode(STATE_LED, OUTPUT);

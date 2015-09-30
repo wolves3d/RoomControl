@@ -27,7 +27,6 @@ public:
 
 	CSensor(uint id, const string & path, const float * optValue = NULL);
 
-	void UpdateValue(float newValue);
 	const char * GetPath() const { return m_path.c_str(); }
 
 private:
@@ -54,15 +53,14 @@ class CSensorManager
 	uint m_monthSensorID;
 	uint m_yearSensorID;
 
-	uint GetSensorIdByPath(const char * szSensorPath);
-
 public:
 
 	CSensorManager();
 	bool Init(CMySqlClient * dbConn);
 	void UpdateSystemSensors();
-	bool UpdateSensor(uint id, float newValue);
+	bool UpdateSensor(uint id, float newValue, bool isSetter, bool forceUpdateClient = false);
 
+	uint GetSensorIdByPath(const char * szSensorPath);
 	CSensor * GetSensor(uint id);
 };
 

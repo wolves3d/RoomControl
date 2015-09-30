@@ -2,20 +2,6 @@
 #include "Server.h"
 
 
-class COddOperator : public ILogicOp
-{
-	virtual const char * GetName() const { return "odd"; }
-
-	virtual bool Evaluate(ISensor *a, ISensor *b)
-	{
-		DEBUG_ASSERT(NULL != a);
-		DEBUG_ASSERT(NULL == b);
-
-		int test = ((int)a->GetValue() % 2);
-		return (0 != test);
-	}
-};
-
 
 void CRuleManager::Init()
 {
@@ -78,41 +64,11 @@ void CRuleManager::AddLogicOpWithID(size_t opID, ILogicOp *logicOp)
 }
 
 
-void CRuleManager::InitLogicOps()
-{
-	AddLogicOp(new COddOperator);
 
-	CMySqlClient * db = g_server->GetDB();
-	const char query[] = "SELECT * FROM `logic_ops` WHERE 1";
-
-	CMySqlResult result;
-	if (true == db->Query(&result, query))
-	{
-		// output table name
-		printf("Logic operators list (DB)\n");
-
-		CMySqlRow row;
-		while (true == result.GetNextRow(&row))
-		{
-			uint opertaorID = row.GetInt(0);
-			string opertaorName = row.GetString(1);
-
-			printf("id %d name %s\n", opertaorID, opertaorName.c_str());
-
-			ILogicOp * logicOp = GetLogicOpWithName(opertaorName.c_str());
-			if (NULL != logicOp)
-			{
-				AddLogicOpWithID(opertaorID, logicOp);
-			}
-		}
-	}
-}
 
 
 void CRuleManager::InitRules()
 {
-	AddLogicOp(new COddOperator);
-
 	CMySqlClient * db = g_server->GetDB();
 	const char query[] = "SELECT * FROM `rules` WHERE 1";
 
@@ -192,7 +148,8 @@ void CRuleManager::OnUpdate()
 		
 		g_sensorMgr->UpdateSensor(
 			rule->GetTargetSensorID(),
-			rule->GetValue());
+			rule->GetValue(),
+			true);
 
 		++it;
 	}

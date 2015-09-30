@@ -6,6 +6,8 @@
 
 OneWireWrapper oneWire(ONE_WIRE_SIGNAL_PIN);
 
+int g_queueSize = 0;
+
 #include "pinWatchDog.h"
 #include "StateBlink.h"
 
@@ -56,8 +58,9 @@ void setup(void)
 
 void loop()
 {
-	stateBlink.OnUpdate();
 	commandManager.OnLoop();
+	stateBlink.OnUpdate();
+	
 
 
 

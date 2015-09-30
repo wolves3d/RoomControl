@@ -37,8 +37,14 @@ public:
 	CTcpSocket * GetServerSocket() { return &m_serverSocket; }
 
 private:
+
+	void OnEverySecondUpdate();
+
 	// Callbacks
 	void OnArduinoUID(const byte * data, uint size, IResponseHandler * handler, IAbstractSocket * socket, CCommandManager * mgr, void * userArg);
+	void OnTempSensorUpdated(const byte * data, uint size, IResponseHandler * handler, IAbstractSocket * socket, CCommandManager * mgr, void * userArg);
+
+	uint m_nextUpdate;
 };
 
 extern CClient * g_client;

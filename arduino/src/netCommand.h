@@ -20,17 +20,17 @@ enum ECommandID
 	CMD_REQUEST_ONE_WIRE_ENUM = 6,
 	RSP_ONE_WIRE_ENUM_BEGIN = 7,
 	RSP_ONE_WIRE_ROM_FOUND = 8,
-	RSP_ONE_WIRE_ENUM_END = 9,
+//	RSP_ONE_WIRE_ENUM_END = 9,
 
 	CMD_OW_READ_TEMP_SENSOR_DATA = 10,
-	RSP_OW_TEMP_SENSOR_DATA = 11,
+//	RSP_OW_TEMP_SENSOR_DATA = 11,
 
 	RSP_PING = 12,
 	RSP_INVALID_REQUEST = 13,
 	RSP_INVALID_CMD = 14,
 
 	CMD_READ_EEPROM = 15,
-	RSP_READ_EEPROM = 16,
+//	RSP_READ_EEPROM = 16,
 
 	CMD_WRITE_EEPROM = 17,
 	RSP_WRITE_EEPROM = 18,
@@ -105,10 +105,17 @@ public:
 		Serial.write((byte *)&cmdTag, 1);
 		Serial.write((byte *)&count, 1);
 
-		if (count > 0)
+		/*
+		for (byte i = 0; i < count; ++i)
 		{
-			Serial.write(data, count);
+			Serial.write((data + i), 1);
 		}
+		*/
+
+ 		if (count > 0)
+ 		{
+ 			Serial.write(data, count);
+ 		}
 	}
 };
 
