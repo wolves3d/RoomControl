@@ -1,23 +1,34 @@
  #!/bin/bash
 
-USER="sudo -H -u linuxium"
+#USER="sudo -H -u linuxium"
+USER=""
 ROOT="sudo"
 
+clear
+
 # pull sources -----------------------------------------------------------------
+echo "Updating sources"
+
 $USER git pull
+$USER git submodule update --recursive --init
 if [ $? -ne 0 ]; then
     echo "git pull failed"
     exit 1
 fi
+echo "\n"
+
 
 # build client -----------------------------------------------------------------
-cd ../client
+echo "Building client"
+cd source
 $USER make clean
 $USER make
 if [ $? -ne 0 ]; then
     echo "client build failed"
     exit 1
 fi
+echo "\n"
+
 
 # build arduino sketch ---------------------------------------------------------
 cd ../arduino

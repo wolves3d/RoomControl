@@ -3,10 +3,14 @@ OBJ_DIR=obj
 
 SOURCES=pch.cpp \
 main.cpp \
-CommandManager.cpp \
-../common/serialport.cpp
+Client/Client.cpp \
+Client/ClientRequests.cpp \
+Client/ClientResponses.cpp
 
-INCLUDES=-I./ -I../common -I../thirdparty/curl/include
+INCLUDES=-I./ \
+-I../common -I../thirdparty/curl/include \
+-I../common -I../submodules/CodeBase
+
 EXECUTABLE=hello
 
 CC=g++
