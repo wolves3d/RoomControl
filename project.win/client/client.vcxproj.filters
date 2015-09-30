@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{f9a1664f-4993-4770-8e30-6ca9a6be748e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\CodeBase">
+      <UniqueIdentifier>{96f9f551-54ef-4089-bec0-a84572de9790}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\CodeBase\network">
+      <UniqueIdentifier>{d7c8ee4b-4f90-409f-997e-cc31d2eebf82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\CodeBase\network\tcp_socket">
+      <UniqueIdentifier>{5d4befe1-f67b-47fe-a4ee-d14b92d68d1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\CodeBase\network\serial_socket">
+      <UniqueIdentifier>{e74fa53f-2c5b-4c32-80a3-a5a3aec01452}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\CodeBase\network\transport">
+      <UniqueIdentifier>{7f909e1a-5eb6-4268-9296-344a28e7af67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Arduino">
+      <UniqueIdentifier>{41fa39ff-fd40-473d-b250-668c2fa13d23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Server">
+      <UniqueIdentifier>{9312f060-d9aa-4276-b94d-286df9f4ef12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Client">
+      <UniqueIdentifier>{ea67a643-d468-486a-8e77-7e29304adfc6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\submodules\CodeBase\network\tcp_socket\tcp_socket.h">
+      <Filter>Source\CodeBase\network\tcp_socket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\submodules\CodeBase\network\serial_socket\serialport.h">
+      <Filter>Source\CodeBase\network\serial_socket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\submodules\CodeBase\network\AbstractSocket.h">
+      <Filter>Source\CodeBase\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\submodules\CodeBase\network\transport\CommandManager.h">
+      <Filter>Source\CodeBase\network\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\submodules\CodeBase\network\transport\PacketManager.h">
+      <Filter>Source\CodeBase\network\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\pch.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Arduino\ArduinoManager.h">
+      <Filter>Source\Arduino</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Arduino\CommandHandlers.h">
+      <Filter>Source\Arduino</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\arduino\src\netCommand.h">
+      <Filter>Source\Arduino</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Server\Server.h">
+      <Filter>Source\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\submodules\CodeBase\CodeBase.h">
+      <Filter>Source\CodeBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\NetPacket.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\submodules\CodeBase\network\transport\NetListener.h">
+      <Filter>Source\CodeBase\network\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Server\MySqlClient.h">
+      <Filter>Source\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Server\SensorManager.h">
+      <Filter>Source\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Server\RuleManager.h">
+      <Filter>Source\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Client\Client.h">
+      <Filter>Source\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Arduino\ArduinoDevice.h">
+      <Filter>Source\Arduino</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Server\ServerRequests.h">
+      <Filter>Source\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Server\ServerResponses.h">
+      <Filter>Source\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Client\ClientResponses.h">
+      <Filter>Source\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Arduino\ArduinoRequests.h">
+      <Filter>Source\Arduino</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\NetProtocol.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Client\ClientRequests.h">
+      <Filter>Source\Client</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\submodules\CodeBase\network\tcp_socket\tcp_socket.cpp">
+      <Filter>Source\CodeBase\network\tcp_socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\submodules\CodeBase\network\serial_socket\serialport_win32.cpp">
+      <Filter>Source\CodeBase\network\serial_socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\submodules\CodeBase\network\transport\CommandManager.cpp">
+      <Filter>Source\CodeBase\network\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\main.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\pch.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\Arduino\ArduinoManager.cpp">
+      <Filter>Source\Arduino</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\Server\SensorManager.cpp">
+      <Filter>Source\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\Server\Sensor.cpp">
+      <Filter>Source\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\Server\Rule.cpp">
+      <Filter>Source\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\Server\RuleManager.cpp">
+      <Filter>Source\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\Server\Server.cpp">
+      <Filter>Source\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\Client\Client.cpp">
+      <Filter>Source\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\Arduino\ArduinoDevice.cpp">
+      <Filter>Source\Arduino</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\Server\ServerResponses.cpp">
+      <Filter>Source\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\Server\ServerRequests.cpp">
+      <Filter>Source\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\Client\ClientResponses.cpp">
+      <Filter>Source\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\Arduino\ArduinoRequests.cpp">
+      <Filter>Source\Arduino</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\Client\ClientRequests.cpp">
+      <Filter>Source\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\Server\LogicOps.cpp">
+      <Filter>Source\Server</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

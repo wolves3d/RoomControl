@@ -1,0 +1,3 @@
+[submodule "submodules/CodeBase"]
+	path = submodules/CodeBase
+	url = git@github.com:wolves3d/CodeBase.git

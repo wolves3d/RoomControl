@@ -20,17 +20,22 @@ struct OneWireAddr
 		memset(addr, 0x0, ADDR_LEN);
 	}
 
-	OneWireAddr(byte * other_addr)
+	OneWireAddr(const byte * other_addr)
 	{
 		Set(other_addr);
 	}
 
-	void Set(byte * other_addr)
+	void Set(const byte * other_addr)
 	{
 		memcpy(addr, other_addr, ADDR_LEN);
 	}
 
 	byte * Address()
+	{
+		return addr;
+	}
+
+	const byte * Address() const
 	{
 		return addr;
 	}
@@ -42,7 +47,7 @@ struct OneWireAddr
 
 #ifdef CLIENT_IMPL
 
-	string ToString()
+	string ToString() const
 	{
 		char buf[128];
 		char * p = buf;
@@ -128,21 +133,21 @@ public:
 		{
 			if (0 == m_blobCount)
 			{
-				SerialCommand::Send(RSP_ONE_WIRE_ENUM_BEGIN, 0, 0);
+				SerialCommand::Send(RSP_ONE_WIRE_ENUM_BEGIN, 0, 0, 0);
 			}
 
 			if (0 != search(outBlob->Address()))
 			{
 				// found
 				++m_blobCount;
-				SerialCommand::Send(RSP_ONE_WIRE_ROM_FOUND, outBlob->Address(), 8);
+				SerialCommand::Send(RSP_ONE_WIRE_ROM_FOUND, 0, outBlob->Address(), 8);
 				return true;
 			}
 
 			// search done
 			reset_search();
 			m_enumMode = false;
-			SerialCommand::Send(RSP_ONE_WIRE_ENUM_END, 0, 0);
+			SerialCommand::Send(CMD_REQUEST_ONE_WIRE_ENUM, 0, 0, 0);
 		}
 
 		return false;
@@ -183,7 +188,7 @@ public:
 			reset();
 			select(addr);
 			write(0x44, 1); // start conversion, with parasite power on at the end
-			//  delay(750);     // maybe 750ms is enough, maybe not
+		//	 delay(750);     // maybe 750ms is enough, maybe not
 
 			// we might do a ds.depower() here, but the reset will take care of it.
 			//ds.depower();
