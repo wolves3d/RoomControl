@@ -56,6 +56,8 @@ string HexStringFromBytes(const byte * buffer, size_t size)
 
 void AssertMsg(const char * szFile, int nLine, const char * szString)
 {
+	#ifdef WIN32
+	
 	string messageString = u_string_format(
 		"Assertion Failed : %s\nFile: \"%s\" Line: %d\nYes - break into debugger, No - Exit program, Cancel - skip",
 		szString, szFile, nLine);
@@ -75,4 +77,6 @@ void AssertMsg(const char * szFile, int nLine, const char * szString)
 		exit(-1);
 		return;
 	}
+	
+	#endif // #ifdef WIN32
 }
