@@ -9,7 +9,7 @@ Client/ClientResponses.cpp
 
 INCLUDES=-I./ \
 -I../common -I../thirdparty/curl/include \
--I../common -I../submodules/CodeBase
+-I../common -I../submodules
 
 EXECUTABLE=hello
 

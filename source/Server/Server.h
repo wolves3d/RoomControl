@@ -1,4 +1,8 @@
-#include "NetListener.h"
+#ifndef __Server_h_included__
+#define __Server_h_included__
+
+
+#include "CodeBase/network/transport/NetListener.h"
 #include "../NetPacket.h"
 #include "NetProtocol.h"
 //#include "Arduino/CommandHandlers.h"
@@ -92,3 +96,6 @@ private:
 
 
 extern CServer * g_server;
+
+
+#endif // #ifndef __Server_h_included__

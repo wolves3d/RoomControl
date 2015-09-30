@@ -3,9 +3,9 @@
 #define __Client_h_included__
 //==============================================================================
 
-#include "CommandManager.h"
-#include "serialport.h"
-#include "tcp_socket.h"
+#include "CodeBase/network/transport/CommandManager.h"
+#include "CodeBase/network/serial_socket/serialport.h"
+#include "CodeBase/network/tcp_socket/tcp_socket.h"
 
 #include "Arduino/ArduinoManager.h"
 #include "Arduino/CommandHandlers.h"

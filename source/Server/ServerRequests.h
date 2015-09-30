@@ -1,5 +1,5 @@
-
-
+#ifndef __ServerRequests_h_included__
+#define __ServerRequests_h_included__
 
 //REQUEST_HANDLER_DECL(SetPinValue, SET_PIN_VALUE, NULL);
 
@@ -19,3 +19,6 @@ private:
 	string m_pinName;
 	byte m_pinValue;
 };
+
+
+#endif // #ifndef __ServerRequests_h_included__
