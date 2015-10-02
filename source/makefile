@@ -23,7 +23,7 @@ CFLAGS=-c -Wall
 LDFLAGS=
 LDLIBS=\
 -L../thirdparty/curl/ubuntu \
--L../thirdparty/mysql/lib/ubuntu \
+-L../thirdparty/mysql/lib/ubuntu/x86_32 \
 -lcurl -lmysqlclient
 
 # auto ------------------------------------------------------------------------
