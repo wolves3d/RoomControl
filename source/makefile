@@ -8,9 +8,9 @@ Client/ClientRequests.cpp \
 Client/ClientResponses.cpp
 
 INCLUDES=-I./ \
--I../common -I../submodules \
--I../common -I../thirdparty/curl/include \
--I../common -I../thirdparty/mysql/include
+-I../submodules \
+-I../thirdparty/curl/include \
+-I../thirdparty/mysql/include
 
 
 EXECUTABLE=hello
@@ -21,18 +21,21 @@ LDFLAGS=
 LDLIBS=-L../thirdparty/curl/ubuntu/ -lcurl
 
 # auto ------------------------------------------------------------------------
+#http://stackoverflow.com/questions/7004702/how-can-i-create-a-makefile-for-c-projects-with-src-obj-and-bin-subdirectories
 
 empty :=
 space := $(empty) $(empty)
 
-#OBJECTS=$(SOURCES:.cpp=.o)
-#OBJECTS_TEMP = $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(SOURCES))
-#OBJECTS = $(subst ..,__,$(OBJECTS_TEMP))
-OBJECTS := $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(notdir $(SOURCES)))
+OBJECTS=$(SOURCES:.cpp=.o)
+LOBJECTS := $(SOURCES:%.cpp=$(OBJ_DIR)/%.o)
+#OBJECTS := $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+#LOBJECTS=$(SOURCES:.cpp=.o)
+#LOBJECTS := $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(notdir $(SOURCES)))
 
 #SRCDIRS = $(shell find . -name '*.cpp' | dirname {} | sort | uniq | sed 's/\/$(SOURCES)//g' )
-SRCDIRS_RAW = $(shell dirname $(SOURCES) | sort | uniq )
-SRCDIRS_OBJ = $(subst ..,__,$(SRCDIRS_RAW))
+#SRCDIRS_RAW = $(shell dirname $(SOURCES) | sort | uniq )
+#SRCDIRS_RAW = $(shell dirname $(SOURCES))
+#SRCDIRS_OBJ = $(subst ..,__,$(SRCDIRS_RAW))
 VPATH = $(subst $(space),:,$(SRCDIRS_RAW))
 
 # targets ---------------------------------------------------------------------
@@ -44,12 +47,15 @@ clean:
 
 # link	
 $(EXECUTABLE): $(OBJECTS) 
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@ $(LDLIBS)
+	@echo Linknig
+	$(CC) $(LDFLAGS) $(LOBJECTS) -o $@ $(LDLIBS)
 
 # compilation
-$(OBJ_DIR)/%.o : %.cpp
+%.o : %.cpp
 	@echo compile $<
-	$(CC) $(CFLAGS) $(INCLUDES) $< -o $@
+	@echo output $@
+	#$(CC) $(INCLUDES) $(CFLAGS) -c $< -o $@
+	$(CC) $(INCLUDES) $(CFLAGS) -c $< -o $(OBJ_DIR)/$@
 
 buildrepo:
 	@$(call make-repo)
@@ -58,14 +64,17 @@ buildrepo:
 
 # Create obj directory structure
 define make-repo
-#	@echo "DUMP"
-#	@echo $(SOURCES)
-#	@echo $(SRCDIRS)
-#	@echo $(OBJECTS)
-#	@echo "HHH"
+	@echo "OBJECTS"
+	@echo $(OBJECTS)
+	@echo "LOBJECTS"
+	@echo $(LOBJECTS)
+	@echo "HHH"
 	mkdir -p $(OBJ_DIR)
-#	for dir in $(SRCDIRS_OBJ); \
-#	do \
-#		mkdir -p $(OBJ_DIR)/$$dir; \
-#	done
+	@echo "ZZZ"
+	for F in $(SOURCES);\
+	do\
+		echo $$F;\
+		echo $$(dirname $$F);\
+		mkdir -p $(OBJ_DIR)/$$(dirname $$F);\
+	done
 endef
