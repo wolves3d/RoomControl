@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "client.h"
+#include "Client.h"
 
 
 void OnSetPinValue::OnResponse(const byte * data, uint size, IAbstractSocket * socket, CCommandManager * mgr)
