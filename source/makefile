@@ -1,7 +1,9 @@
 SRC_DIR=./
+MODULE_DIR=../submodules/CodeBase/network
 OBJ_DIR=obj
 
-SOURCES := $(wildcard **/*.cpp)
+SOURCES := $(wildcard *.cpp) $(wildcard **/*.cpp) $(wildcard $(MODULE_DIR)/**/*.cpp)
+
 #SOURCES=pch.cpp \
 #main.cpp \
 #Client/Client.cpp \
