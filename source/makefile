@@ -61,8 +61,8 @@ $(EXECUTABLE): $(OBJECTS)
 # compilation
 %.o : %.cpp
 	@echo compile $<
-	@echo output $@
-	$(CC) $(INCLUDES) $(CFLAGS) -c $< -o $(OBJ_DIR)/$@
+	#@echo output $@
+	@$(CC) $(INCLUDES) $(CFLAGS) -c $< -o $(OBJ_DIR)/$@
 
 buildrepo:
 	@$(call make-repo)
