@@ -4,8 +4,6 @@
 #include <OneWire.h>
 #include "OneWireWrapper.h"
 
-int g_queueSize = 0;
-
 #include "pinWatchDog.h"
 #include "StateBlink.h"
 

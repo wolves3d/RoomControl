@@ -207,7 +207,6 @@ public:
 		// ------
 		
 		byte a = Serial.available();
-		g_queueSize = (int)a;
 		/*
 		if (a > 0)
 		{
