@@ -4,8 +4,6 @@
 #include <OneWire.h>
 #include "OneWireWrapper.h"
 
-OneWireWrapper oneWire(ONE_WIRE_SIGNAL_PIN);
-
 int g_queueSize = 0;
 
 #include "pinWatchDog.h"
