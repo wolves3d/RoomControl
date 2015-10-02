@@ -21,7 +21,10 @@ EXECUTABLE=hello
 CC=g++
 CFLAGS=-c -Wall
 LDFLAGS=
-LDLIBS=-L../thirdparty/curl/ubuntu/ -lcurl
+LDLIBS=\
+-L../thirdparty/curl/ubuntu \
+-L../thirdparty/mysql/lib/ubuntu \
+-lcurl -lmysqlclient
 
 # auto ------------------------------------------------------------------------
 #http://stackoverflow.com/questions/7004702/how-can-i-create-a-makefile-for-c-projects-with-src-obj-and-bin-subdirectories
