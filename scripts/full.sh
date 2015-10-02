@@ -9,8 +9,8 @@ clear
 # pull sources -----------------------------------------------------------------
 echo "Updating sources"
 
-#$USER git pull
-#$USER git submodule update --recursive --init
+$USER git pull
+$USER git submodule update --recursive --init
 if [ $? -ne 0 ]; then
     echo "git pull failed"
     exit 1
@@ -22,7 +22,8 @@ echo "\n"
 echo "Building client"
 cd source
 $USER make clean
-$USER make > build.log
+#$USER make > build.log
+$USER make
 if [ $? -ne 0 ]; then
     echo "client build failed"
     exit 1

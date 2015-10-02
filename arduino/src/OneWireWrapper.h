@@ -207,4 +207,6 @@ public:
 	}
 };
 
+OneWireWrapper oneWire(ONE_WIRE_SIGNAL_PIN);
+
 #endif // #ifndef CLIENT_IMPL
