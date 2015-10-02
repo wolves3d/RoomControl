@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "server.h"
+#include "Server.h"
 
 
 void OnClientInfo::OnResponse(const byte * data, uint size, IAbstractSocket * socket, CCommandManager * mgr)
