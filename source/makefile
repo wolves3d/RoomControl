@@ -1,11 +1,12 @@
 SRC_DIR=./
 OBJ_DIR=obj
 
-SOURCES=pch.cpp \
-main.cpp \
-Client/Client.cpp \
-Client/ClientRequests.cpp \
-Client/ClientResponses.cpp
+SOURCES := $(wildcard **/*.cpp)
+#SOURCES=pch.cpp \
+#main.cpp \
+#Client/Client.cpp \
+#Client/ClientRequests.cpp \
+#Client/ClientResponses.cpp
 
 INCLUDES=-I./ \
 -I../submodules \
@@ -54,7 +55,6 @@ $(EXECUTABLE): $(OBJECTS)
 %.o : %.cpp
 	@echo compile $<
 	@echo output $@
-	#$(CC) $(INCLUDES) $(CFLAGS) -c $< -o $@
 	$(CC) $(INCLUDES) $(CFLAGS) -c $< -o $(OBJ_DIR)/$@
 
 buildrepo:
@@ -64,6 +64,8 @@ buildrepo:
 
 # Create obj directory structure
 define make-repo
+	@echo "SOURCES"
+	@echo $(SOURCES)
 	@echo "OBJECTS"
 	@echo $(OBJECTS)
 	@echo "LOBJECTS"
