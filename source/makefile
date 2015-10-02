@@ -2,6 +2,8 @@ SRC_DIR=./
 MODULE_DIR=../submodules/CodeBase/network
 OBJ_DIR=obj
 
+PLATFORM := $(shell uname -p)
+
 SOURCES := $(wildcard *.cpp) $(wildcard **/*.cpp) $(wildcard $(MODULE_DIR)/**/*.cpp)
 
 #SOURCES=pch.cpp \
@@ -23,8 +25,8 @@ CFLAGS=-c -Wall
 LDFLAGS=
 LDLIBS=\
 -L../thirdparty/curl/ubuntu \
--L../thirdparty/mysql/lib/ubuntu/x86_32 \
--lcurl -lmysqlclient
+-L../thirdparty/mysql/lib/$(PLATFORM) \
+-lcurl -lmysqlclient -lpthread
 
 # auto ------------------------------------------------------------------------
 #http://stackoverflow.com/questions/7004702/how-can-i-create-a-makefile-for-c-projects-with-src-obj-and-bin-subdirectories
@@ -69,6 +71,7 @@ buildrepo:
 
 # Create obj directory structure
 define make-repo
+	@echo "PLATFORM: $(PLATFORM)"
 	@echo "SOURCES"
 	@echo $(SOURCES)
 	@echo "OBJECTS"
