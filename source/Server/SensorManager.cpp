@@ -97,7 +97,7 @@ bool CSensorManager::UpdateSensor(uint id, float newValue, bool isSetter, bool f
 
 		// update data base record -------------------------------------------------
 
-		uint startTime = GetTickCount();
+		//uint startTime = GetTickCount();
 		{
 			const size_t sensorID = sensor->GetID();
 			/*
