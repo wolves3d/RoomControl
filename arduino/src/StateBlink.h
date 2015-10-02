@@ -17,7 +17,7 @@ public:
 		: m_workTime(0)
 	{
 		SetState(ES_OK);
-		m_secondAlarm.Schedule(100);
+		m_secondAlarm.Schedule(1000);
 	}
 
 	void SetState(EState state)

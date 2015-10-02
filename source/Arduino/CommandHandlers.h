@@ -17,7 +17,7 @@ class PingResponse : public IResponseHandler
 		DEBUG_ASSERT(2 == size);
 		int workTime = *((short *)data);
 
-		workTime = (GetTickCount() - ttt);
+		//workTime = (GetTickCount() - ttt);
 
 		printf("ping %d sec\n", workTime);
 	}

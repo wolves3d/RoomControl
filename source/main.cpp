@@ -106,6 +106,7 @@ int main()
 
 //	arduinoCmdManager.SendCommand(&arduinoPort, CMD_REQUEST_ONE_WIRE_ENUM, NULL, 0);
 	
+	//int c = 20;
 	while (true)
 	{
 		server.OnUpdate();
