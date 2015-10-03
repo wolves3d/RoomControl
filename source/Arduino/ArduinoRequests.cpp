@@ -64,7 +64,8 @@ void ArduinoReadOneWire::OnResponse(const byte * dat, uint size, IAbstractSocket
 
 	// hack object
 	OneWireAddr addr(dat);
-	const byte * oneWireBin = dat + OneWireAddr::ADDR_LEN;
+	//const byte * oneWireBin = dat + OneWireAddr::ADDR_LEN;
+	const char * oneWireBin = (char*)dat + OneWireAddr::ADDR_LEN;
 	/*
 	printf("ArduinoReadOneWire: sensor id:");
 	for (uint i = 0; i < OneWireAddr::ADDR_LEN; ++i)
