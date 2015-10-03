@@ -24,7 +24,7 @@ CC=g++
 CFLAGS=-c -Wall
 LDFLAGS=
 LDLIBS=\
--L../thirdparty/curl/ubuntu \
+-L../thirdparty/curl/lib/$(PLATFORM) \
 -L../thirdparty/mysql/lib/$(PLATFORM) \
 -lcurl -lmysqlclient -lpthread
 
