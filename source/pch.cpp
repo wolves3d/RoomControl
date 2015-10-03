@@ -40,7 +40,7 @@ string HexStringFromBytes(const byte * buffer, size_t size)
 
 		for (size_t i = 0; i < size; ++i)
 		{
-			int byteValue = (char)buffer[i];
+			unsigned int byteValue = (byte)buffer[i];
 			sprintf(ptr, "%02X", byteValue);
 
 			ptr += 2;
