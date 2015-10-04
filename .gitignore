@@ -5,3 +5,4 @@ ipch
 *.sdf
 /project.win/client/*.user
 /project.win/*.opensdf
+/source/obj
