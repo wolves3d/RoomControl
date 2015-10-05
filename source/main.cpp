@@ -90,7 +90,7 @@ int main()
 
 	printf("--- Client ---\n");
 	CClient client;
-	client.Init("127.0.0.1", SERVER_PORT);
+	client.Init("192.168.0.1", SERVER_PORT);
 
 	// -------------------------------------------------------------------------
 
