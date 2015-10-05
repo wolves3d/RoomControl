@@ -9,7 +9,7 @@
 // you'll always get ERROR_FILE_NOT_FOUND, even if the port exists.
 // To avoid that behaviour, the port name should be passed as \\.\COMx (replacing x with the port number we want to test)
 // Link: support.microsoft.com/kb/115831
-#define ARDUINO_PORT "\\\\.\\COM18"
+#define ARDUINO_PORT "\\\\.\\COM7"
 
 #else
 
