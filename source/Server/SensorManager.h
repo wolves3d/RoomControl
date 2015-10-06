@@ -10,6 +10,7 @@ class CMySqlClient;
 
 struct ISensor
 {
+	virtual ~ISensor() {}
 	virtual float GetValue() const = 0;
 	virtual size_t GetID() const = 0;
 };

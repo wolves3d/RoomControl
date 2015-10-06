@@ -1,19 +1,23 @@
 #Globals
-SRC_ROOT_DIR := ./source
 BIN_DIR := ./bin
 OBJ_TARGET_DIR := ./obj
-MODULE_DIR := ./submodules/CodeBase/network
+
+#inputs
+CLIENT_SRC_DIRS := source/*.c* \
+source/Arduino/*.c* \
+source/Client/*.c* \
+source/Server/*.c* \
+submodules/CodeBase/network/**/*.c*
 
 #Client source dirs
-CLIENT_SRC_DIRS := . Arduino Client Server
+#CLIENT_SRC_DIRS := . Arduino Client Server
 #CLIENT_SRC_DIRS := .
 CLIENT_INC_DIRS := source submodules thirdparty/curl/include thirdparty/mysql/include
 
 # Add source path prefix
-CLIENT_SRC_DIRS := $(addprefix $(SRC_ROOT_DIR)/, $(CLIENT_SRC_DIRS))
 CLIENT_INC_DIRS := $(addprefix -I, $(CLIENT_INC_DIRS))
 # Search *.c* files
-CLIENT_SRC := $(wildcard $(addsuffix /*.c*, $(CLIENT_SRC_DIRS)))
+CLIENT_SRC := $(wildcard $(CLIENT_SRC_DIRS))
 #CLIENT_SRC := $(subst //.//,//,$(CLIENT_SRC))
 
 
@@ -57,32 +61,33 @@ all: show_vars client
 show_vars:
 	@$(call dump-vars)
 	
-client: obj_dirs $(CLIENT_OBJ)
-	@echo Linking $<
-	$(CC) $(LDFLAGS) $(CLIENT_OBJ_LIST) -o $(BIN_DIR)/$@ $(LDLIBS)
+client: obj_dirs $(CLIENT_OBJ) client_link
+
+client_link:
+	@echo Linking
+	$(CC) $(LDFLAGS) $(CLIENT_OBJ_LIST) -o $(BIN_DIR)/RoomControlClient $(LDLIBS)
 
 obj_dirs:
-	mkdir -p $(BIN_DIR)
-	mkdir -p $(addprefix $(OBJ_TARGET_DIR)/, $(dir $(CLIENT_OBJ)))
+	@echo Creating output dirs
+	@mkdir -p $(BIN_DIR)
+	@mkdir -p $(addprefix $(OBJ_TARGET_DIR)/, $(dir $(CLIENT_OBJ)))
 
 %.o : %.cpp
-	@echo Compiling $<
+	@echo '    ' Compiling $<
 	@$(CC) $(CLIENT_INC_DIRS) $(CFLAGS) -c $< -o $(OBJ_TARGET_DIR)/$@
 
 # functions -------------------------------------------------------------------
 
 define dump-vars
-	@echo "os:$(OS_NAME) platform:$(PLATFORM)"
-	
-	@echo "CLIENT_SRC_DIRS"
-	@echo $(CLIENT_SRC_DIRS)
-	
-	@echo "CLIENT_SRC_DIRS"
-	@echo $(CLIENT_SRC_DIRS)
-	
-	@echo "CLIENT_INC_DIRS"
-	@echo $(CLIENT_INC_DIRS)
-	
-	@echo "CLIENT_OBJ"
-	@echo $(CLIENT_OBJ)
+	@echo "OS:$(OS_NAME) Platform:$(PLATFORM)"
+#	@echo "CLIENT_SRC"
+#	@echo $(CLIENT_SRC)
+#	@echo "CLIENT_SRC_DIRS"
+#	@echo $(CLIENT_SRC_DIRS)
+#	@echo "CLIENT_SRC_DIRS"
+#	@echo $(CLIENT_SRC_DIRS)
+#	@echo "CLIENT_INC_DIRS"
+#	@echo $(CLIENT_INC_DIRS)
+#	@echo "CLIENT_OBJ"
+#	@echo $(CLIENT_OBJ)
 endef
