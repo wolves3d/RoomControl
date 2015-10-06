@@ -118,7 +118,7 @@ bool CSensorManager::UpdateSensor(uint id, float newValue, bool isSetter, bool f
 			m_dataBase->Query(NULL, query.c_str());
 		}
 
-		printf("Sensor (id:%lu, path:%s) value updated to %f\n", sensor->GetID(), sensor->GetPath(), newValue);
+		printf("Sensor (id:%zu, path:%s) value updated to %f\n", sensor->GetID(), sensor->GetPath(), newValue);
 		//	printf("DB update time = %d msec\n", (GetTickCount() - startTime));
 	}
 
