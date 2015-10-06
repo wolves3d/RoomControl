@@ -7,7 +7,7 @@ class SetPinValue : public INetCommand
 {
 	REQUEST_HANDLER_BODY(SetPinValue, SET_PIN_VALUE, 0);
 
-	SetPinValue(string pinName, byte pinValue)
+	SetPinValue(const string &pinName, byte pinValue)
 		: m_pinName(pinName)
 		, m_pinValue(pinValue)
 	{

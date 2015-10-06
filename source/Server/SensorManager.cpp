@@ -82,6 +82,64 @@ uint CSensorManager::GetSensorIdByPath(const char * szSensorPath)
 }
 
 
+
+class CSensorPath // FIXME: create CArduinoSensor
+{
+public:
+	static bool IsArduinoSensor(const char *sensorPath)
+	{
+		return (sensorPath == strstr(sensorPath, "arduino/"));
+	}
+
+	static bool IsArduinoPin(const char *sensorPath)
+	{
+		return (sensorPath == strstr(sensorPath, "arduino/pin/"));
+	}
+
+	static string GetArduinoPinName(const char *sensorPath)
+	{
+		string result;
+
+		if (true == IsArduinoPin(sensorPath))
+		{
+			uint offset = strlen("arduino/pin/");
+			result.append(sensorPath + offset, 2);
+		}
+		else
+		{
+			DEBUG_ASSERT(false);
+		}
+		
+		return result;
+	}
+
+	static string GetArduinoUID(const char *sensorPath)
+	{
+		string result;
+
+		if (true == IsArduinoSensor(sensorPath))
+		{
+			uint pathLen = strlen(sensorPath);
+			uint offset = strlen("arduino/");
+
+			if ((pathLen - offset) > 16)
+			{
+				result.append(sensorPath + offset, 16);
+			}
+		}
+		
+		if (true == result.empty())
+		{
+			DEBUG_ASSERT(false);
+		}
+
+		return result;
+	}
+};
+
+
+
+
 bool CSensorManager::UpdateSensor(uint id, float newValue, bool isSetter, bool forceUpdateClient)
 {
 	CSensor * sensor = GetSensor(id);
@@ -97,7 +155,7 @@ bool CSensorManager::UpdateSensor(uint id, float newValue, bool isSetter, bool f
 
 		// update data base record -------------------------------------------------
 
-		//uint startTime = GetTickCount();
+		if (0 != strcmp("second", sensor->GetPath())) // Prevent every second DB flood
 		{
 			const size_t sensorID = sensor->GetID();
 			/*
@@ -116,10 +174,9 @@ bool CSensorManager::UpdateSensor(uint id, float newValue, bool isSetter, bool f
 				sensorID, newValue);
 
 			m_dataBase->Query(NULL, query.c_str());
+		
+			printf("Sensor (id:%llu, path:%s) value updated to %f\n", (unsigned long long)sensor->GetID(), sensor->GetPath(), newValue);
 		}
-
-		printf("Sensor (id:%zu, path:%s) value updated to %f\n", sensor->GetID(), sensor->GetPath(), newValue);
-		//	printf("DB update time = %d msec\n", (GetTickCount() - startTime));
 	}
 
 	// send client command -----------------------------------------------------
@@ -127,24 +184,22 @@ bool CSensorManager::UpdateSensor(uint id, float newValue, bool isSetter, bool f
 	if (forceUpdateClient || (isValueChanged && isSetter))
 	{
 		const char * sensorPath = sensor->GetPath();
-
-		// FIXME: hack
-		if (sensorPath == strstr(sensorPath, "arduino"))
+		if (true == CSensorPath::IsArduinoSensor(sensorPath))
 		{
-			// FIXME: hack
-			const char *pinName = strstr(sensorPath, "/pin/");
-			if (NULL != pinName)
+			if (true == CSensorPath::IsArduinoPin(sensorPath))
 			{
-				pinName += 5;
-
-				// FIXME: hack
-				IAbstractSocket * socket = g_server->GetArduinoSocket((const byte *)"\x0\x1\x2\x3\x4\x5\x6\x7", 8);
-				if (NULL != socket)
+				string pinName = CSensorPath::GetArduinoPinName(sensorPath);
+				if (false == pinName.empty())
 				{
-					SetPinValue *pinSetter = NEW SetPinValue(pinName, (byte)sensor->GetValue());
+					const string uidString = CSensorPath::GetArduinoUID(sensorPath);
+					IAbstractSocket * socket = g_server->GetArduinoClient(uidString);
+					if (NULL != socket)
+					{
+						SetPinValue *pinSetter = NEW SetPinValue(pinName, (byte)sensor->GetValue());
 
-					CCommandManager * cmdMgr = g_server->GetCommandManager();
-					cmdMgr->SendCommand(socket, pinSetter);
+						CCommandManager * cmdMgr = g_server->GetCommandManager();
+						cmdMgr->SendCommand(socket, pinSetter);
+					}
 				}
 			}
 		}

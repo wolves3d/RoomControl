@@ -53,8 +53,12 @@ class CServer : public INetListenerDelegate
 
 	virtual void OnClientConnected(CTcpSocket * socket)
 	{
+		const size_t maxLen = 256;
+		char buf[maxLen];
+		inet_ntop(AF_INET, &socket->m_addr.sin_addr, buf, maxLen);
+
 		printf("accepted connection from %s, port %d\n",
-			inet_ntoa(socket->m_addr.sin_addr),
+			buf,
 			htons(socket->m_addr.sin_port));
 
 		m_cmdMgr.GetPacketManager()->AddClent(socket);
@@ -86,7 +90,7 @@ public:
 	}
 
 	void AddArduinoRecord(const byte * UID, size_t uidSize, IAbstractSocket * socket);
-	IAbstractSocket * GetArduinoSocket(const byte * UID, size_t uidSize);
+	IAbstractSocket * GetArduinoClient(const string &arduinoUID);
 
 private:
 

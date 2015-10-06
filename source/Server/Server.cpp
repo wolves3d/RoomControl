@@ -84,11 +84,9 @@ void CServer::AddArduinoRecord(const byte * UID, size_t uidSize, IAbstractSocket
 }
 
 
-IAbstractSocket * CServer::GetArduinoSocket(const byte * UID, size_t uidSize)
+IAbstractSocket * CServer::GetArduinoClient(const string &arduinoUID)
 {
-	string uidString = HexStringFromBytes(UID, uidSize);
-	
-	ArduinoSocketMap::const_iterator it = m_arduinoSockets.find(uidString);
+	ArduinoSocketMap::const_iterator it = m_arduinoSockets.find(arduinoUID);
 	if (m_arduinoSockets.end() != it)
 	{
 		return (it->second);

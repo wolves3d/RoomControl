@@ -12,7 +12,7 @@ submodules/CodeBase/network/**/*.c*
 #Client source dirs
 #CLIENT_SRC_DIRS := . Arduino Client Server
 #CLIENT_SRC_DIRS := .
-CLIENT_INC_DIRS := source submodules thirdparty/curl/include thirdparty/mysql/include
+CLIENT_INC_DIRS := source submodules thirdparty/curl/include thirdparty/mysql/include thirdparty/pugixml
 
 # Add source path prefix
 CLIENT_INC_DIRS := $(addprefix -I, $(CLIENT_INC_DIRS))
@@ -27,10 +27,6 @@ CLIENT_OBJ := $(CLIENT_OBJ:.cpp=.o)
 CLIENT_OBJ := $(CLIENT_OBJ:.c=.o)
 CLIENT_OBJ_LIST := $(addprefix $(OBJ_TARGET_DIR)/, $(CLIENT_OBJ))
 
-INCLUDES := -I./source \
--I../submodules \
--I../thirdparty/curl/include \
--I../thirdparty/mysql/include
 
 OS_NAME := $(shell uname -o)
 PLATFORM := $(shell uname -m)
