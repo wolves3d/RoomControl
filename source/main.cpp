@@ -77,6 +77,11 @@ void LogDB(const char * sensorID, float sensorT)
 		}
 	}
 
+	if (true == isSucceed)
+	{
+		// do nothing
+	}
+
 	// finally -------------------------------------------------------------
 	curl_easy_cleanup(curl);
 }
@@ -95,9 +100,9 @@ int main()
 	// -------------------------------------------------------------------------
 
 	//	uint logDelay = 1000 * 60 * 30;
-	uint logDelay = 5;
-	time_t deadline = 0;
-	bool readFlag = false;
+	//uint logDelay = 5;
+	//time_t deadline = 0;
+	//bool readFlag = false;
 
 	/*
 	byte args[] = { 0, 8, 0, 1, 2, 3, 4, 5, 6, 7 };

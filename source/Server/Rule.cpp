@@ -3,12 +3,12 @@
 
 
 CRule::CRule(size_t ruleID, size_t targetSensorID)
-	: m_isInverted(false)
-	, m_ID(ruleID)
+	: m_ID(ruleID)
 	, m_targetSensorID(targetSensorID)
 	, m_sensorA(NULL)
 	, m_logicOp(NULL)
 	, m_sensorB(NULL)
+	, m_isInverted(false)
 {
 }
 

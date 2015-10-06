@@ -1,6 +1,6 @@
 
 
-REQUEST_HANDLER_DECL(ArduinoEnumerateOneWire, CMD_REQUEST_ONE_WIRE_ENUM, NULL);
+REQUEST_HANDLER_DECL(ArduinoEnumerateOneWire, CMD_REQUEST_ONE_WIRE_ENUM, 0);
 
 
 class ArduinoSetPinValue : public INetCommand

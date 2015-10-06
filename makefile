@@ -5,7 +5,7 @@ OBJ_TARGET_DIR := ./obj
 MODULE_DIR := ./submodules/CodeBase/network
 
 #Client source dirs
-CLIENT_SRC_DIRS := . Arduino Client
+CLIENT_SRC_DIRS := . Arduino Client Server
 #CLIENT_SRC_DIRS := .
 CLIENT_INC_DIRS := source submodules thirdparty/curl/include thirdparty/mysql/include
 

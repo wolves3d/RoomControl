@@ -18,11 +18,11 @@ class OnClientGUIDReady : public INetCommand
 struct ArduinoDeviceEnumeration : ICallback
 {
 	CCommandManager * m_commandManager;
-
 	uint m_count;
+	
 	ArduinoDeviceEnumeration(uint count, CCommandManager * mgr)
-		: m_count(count)
-		, m_commandManager(mgr)
+		: m_commandManager(mgr)
+		, m_count(count)
 	{
 	}
 
@@ -80,7 +80,7 @@ CClient::CClient()
 		System::SleepMS(2000); // time to init microcontroller
 		m_arduinoCmdManager.GetPacketManager()->AddClent(arduinoPort);
 
-		ArduinoDevice * device = m_arduinoMgr.FindDevice(arduinoPort); // register device
+		/*ArduinoDevice * device = */m_arduinoMgr.FindDevice(arduinoPort); // register device
 
 
 		INetCommand * readROM = new ArduinoReadEEPROM(0, 8);
