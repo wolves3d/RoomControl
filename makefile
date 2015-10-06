@@ -7,6 +7,7 @@ CLIENT_SRC_DIRS := source/*.c* \
 source/Arduino/*.c* \
 source/Client/*.c* \
 source/Server/*.c* \
+thirdparty/pugixml/*.c* \
 submodules/CodeBase/network/**/*.c*
 
 #Client source dirs
