@@ -27,8 +27,9 @@ public:
 	virtual size_t GetID() const { return m_id; }
 
 	CSensor(uint id, const string & path, const float * optValue = NULL);
-
 	const char * GetPath() const { return m_path.c_str(); }
+
+	virtual bool IsArduinoSensor() const { return false; }
 
 private:
 	size_t m_id;
@@ -36,6 +37,24 @@ private:
 	float m_value;
 
 	void SetValue(float newVal) { m_value = newVal; }
+};
+
+
+class CArduinoSensor : public CSensor
+{
+public:
+
+	// ÑSensor
+	virtual bool IsArduinoSensor() const { return true; }
+
+	CArduinoSensor(uint id, const string & path, const float * optValue = NULL);
+	static bool IsArduinoSensor(const char *sensorPath);
+	const string & GetPinName() const { return m_pinName; }
+	const string & GetArduinoUID() const { return m_arduinoUID; }
+
+private:
+	string m_arduinoUID;
+	string m_pinName;
 };
 
 

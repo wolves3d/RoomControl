@@ -32,7 +32,16 @@ bool CSensorManager::Init(CMySqlClient * dbConn)
 
 			printf("id %d path %s value %f\n", sensorID, sensorPath.c_str(), value);
 
-			CSensor * sensor = new CSensor(sensorID, sensorPath, &value);
+			CSensor * sensor = nullptr;
+			if (true == CArduinoSensor::IsArduinoSensor(sensorPath.c_str()))
+			{
+				sensor = new CArduinoSensor(sensorID, sensorPath, &value);
+			}
+			else
+			{
+				sensor = new CSensor(sensorID, sensorPath, &value);
+			}
+			
 			m_sensorMap[sensorID] = sensor;
 		}
 	}
@@ -82,64 +91,6 @@ uint CSensorManager::GetSensorIdByPath(const char * szSensorPath)
 }
 
 
-
-class CSensorPath // FIXME: create CArduinoSensor
-{
-public:
-	static bool IsArduinoSensor(const char *sensorPath)
-	{
-		return (sensorPath == strstr(sensorPath, "arduino/"));
-	}
-
-	static bool IsArduinoPin(const char *sensorPath)
-	{
-		return (sensorPath == strstr(sensorPath, "arduino/pin/"));
-	}
-
-	static string GetArduinoPinName(const char *sensorPath)
-	{
-		string result;
-
-		if (true == IsArduinoPin(sensorPath))
-		{
-			uint offset = strlen("arduino/pin/");
-			result.append(sensorPath + offset, 2);
-		}
-		else
-		{
-			DEBUG_ASSERT(false);
-		}
-		
-		return result;
-	}
-
-	static string GetArduinoUID(const char *sensorPath)
-	{
-		string result;
-
-		if (true == IsArduinoSensor(sensorPath))
-		{
-			uint pathLen = strlen(sensorPath);
-			uint offset = strlen("arduino/");
-
-			if ((pathLen - offset) > 16)
-			{
-				result.append(sensorPath + offset, 16);
-			}
-		}
-		
-		if (true == result.empty())
-		{
-			DEBUG_ASSERT(false);
-		}
-
-		return result;
-	}
-};
-
-
-
-
 bool CSensorManager::UpdateSensor(uint id, float newValue, bool isSetter, bool forceUpdateClient)
 {
 	CSensor * sensor = GetSensor(id);
@@ -183,23 +134,19 @@ bool CSensorManager::UpdateSensor(uint id, float newValue, bool isSetter, bool f
 
 	if (forceUpdateClient || (isValueChanged && isSetter))
 	{
-		const char * sensorPath = sensor->GetPath();
-		if (true == CSensorPath::IsArduinoSensor(sensorPath))
+		if (true == sensor->IsArduinoSensor())
 		{
-			if (true == CSensorPath::IsArduinoPin(sensorPath))
+			CArduinoSensor * arduinoSensor = (CArduinoSensor *)sensor;
+			const string &pinName = arduinoSensor->GetPinName();
+			if (false == pinName.empty())
 			{
-				string pinName = CSensorPath::GetArduinoPinName(sensorPath);
-				if (false == pinName.empty())
+				IAbstractSocket * socket = g_server->GetArduinoClient(arduinoSensor->GetArduinoUID());
+				if (NULL != socket)
 				{
-					const string uidString = CSensorPath::GetArduinoUID(sensorPath);
-					IAbstractSocket * socket = g_server->GetArduinoClient(uidString);
-					if (NULL != socket)
-					{
-						SetPinValue *pinSetter = NEW SetPinValue(pinName, (byte)sensor->GetValue());
+					SetPinValue *pinSetter = NEW SetPinValue(pinName, (byte)sensor->GetValue());
 
-						CCommandManager * cmdMgr = g_server->GetCommandManager();
-						cmdMgr->SendCommand(socket, pinSetter);
-					}
+					CCommandManager * cmdMgr = g_server->GetCommandManager();
+					cmdMgr->SendCommand(socket, pinSetter);
 				}
 			}
 		}
