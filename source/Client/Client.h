@@ -18,6 +18,16 @@
 #include "ClientRequests.h"
 #include "ClientResponses.h"
 
+#include "pugixml.hpp"
+
+
+#define CLIENT_CONFIG_FILE "client_config.xml"
+#define CLIENT_CONFIG_ROOT "RoomControlClientConfig"
+#define CONFIG_SERVER_ADDR "server_addr"
+#define CONFIG_CLIENT_UID "client_uid"
+#define CONFIG_CLIENT_EMPTY_UID "EMPTY"
+#define CONFIG_SERVER_ENABLED "server_enabled"
+
 
 class CClient : public CBaseObject
 {
@@ -39,12 +49,15 @@ public:
 private:
 
 	void OnEverySecondUpdate();
+	void LoadConfig();
+	void SaveConfig();
 
 	// Callbacks
 	void OnArduinoUID(const byte * data, uint size, IResponseHandler * handler, IAbstractSocket * socket, CCommandManager * mgr, void * userArg);
 	void OnTempSensorUpdated(const byte * data, uint size, IResponseHandler * handler, IAbstractSocket * socket, CCommandManager * mgr, void * userArg);
 
 	uint m_nextUpdate;
+	pugi::xml_document m_config;
 };
 
 extern CClient * g_client;

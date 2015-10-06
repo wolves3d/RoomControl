@@ -95,9 +95,57 @@ CClient::CClient()
 
 bool CClient::Init(const char * addr, uint port)
 {
+	LoadConfig();
+
 	m_serverSocket.Connect(addr, port);
 	m_cmdManager.GetPacketManager()->AddClent(&m_serverSocket);
 	return true;
+}
+
+
+void CClient::LoadConfig()
+{
+	pugi::xml_node root;
+	if (true == m_config.load_file(CLIENT_CONFIG_FILE))
+	{
+		root = m_config.child(CLIENT_CONFIG_ROOT);
+	}
+	else
+	{
+		root = m_config.append_child(CLIENT_CONFIG_ROOT);
+	}
+
+	// default values ----------------------------------------------------------
+	pugi::xml_attribute attr;
+
+	attr = root.attribute(CONFIG_SERVER_ADDR);
+	if (true == attr.empty())
+	{
+		attr = root.append_attribute(CONFIG_SERVER_ADDR);
+		attr.set_value("192.168.0.1");
+	}
+
+	attr = root.attribute(CONFIG_CLIENT_UID);
+	if (true == attr.empty())
+	{
+		attr = root.append_attribute(CONFIG_CLIENT_UID);
+		attr.set_value(CONFIG_CLIENT_EMPTY_UID);
+	}
+
+	attr = root.attribute(CONFIG_SERVER_ENABLED);
+	if (true == attr.empty())
+	{
+		attr = root.append_attribute(CONFIG_SERVER_ENABLED);
+		attr.set_value(false);
+	}
+
+	SaveConfig();
+}
+
+
+void CClient::SaveConfig()
+{
+	m_config.save_file(CLIENT_CONFIG_FILE);
 }
 
 

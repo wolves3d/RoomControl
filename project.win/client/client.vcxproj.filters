@@ -28,6 +28,12 @@
     <Filter Include="Source\Client">
       <UniqueIdentifier>{ea67a643-d468-486a-8e77-7e29304adfc6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\thirdparty">
+      <UniqueIdentifier>{64151b41-bce0-4650-b88d-da8ee1919210}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\thirdparty\pugixml">
+      <UniqueIdentifier>{e38e9b8d-0265-427f-aa3b-74c6bb8eb1d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\submodules\CodeBase\network\tcp_socket\tcp_socket.h">
@@ -102,6 +108,12 @@
     <ClInclude Include="..\..\source\Client\ClientRequests.h">
       <Filter>Source\Client</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\thirdparty\pugixml\pugiconfig.hpp">
+      <Filter>Source\thirdparty\pugixml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\pugixml\pugixml.hpp">
+      <Filter>Source\thirdparty\pugixml</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\submodules\CodeBase\network\tcp_socket\tcp_socket.cpp">
@@ -160,6 +172,9 @@
     </ClCompile>
     <ClCompile Include="..\..\source\Server\LogicOps.cpp">
       <Filter>Source\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\thirdparty\pugixml\pugixml.cpp">
+      <Filter>Source\thirdparty\pugixml</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

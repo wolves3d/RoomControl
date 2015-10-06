@@ -35,6 +35,8 @@
     <ClInclude Include="..\..\submodules\CodeBase\network\transport\CommandManager.h" />
     <ClInclude Include="..\..\submodules\CodeBase\network\transport\NetListener.h" />
     <ClInclude Include="..\..\submodules\CodeBase\network\transport\PacketManager.h" />
+    <ClInclude Include="..\..\thirdparty\pugixml\pugiconfig.hpp" />
+    <ClInclude Include="..\..\thirdparty\pugixml\pugixml.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\Arduino\ArduinoDevice.cpp" />
@@ -66,6 +68,9 @@
     <ClCompile Include="..\..\submodules\CodeBase\network\transport\CommandManager.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\thirdparty\pugixml\pugixml.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4F9CA02F-B5C8-442B-807D-9B3D36A0FA01}</ProjectGuid>
@@ -76,7 +81,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -111,9 +116,10 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\source;$(SolutionDir)\..\submodules;$(SolutionDir)\..\submodules\CodeBase\thirdparty\pthread;$(SolutionDir)\..\thirdparty\curl\include;$(SolutionDir)\..\thirdparty\mysql\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\source;$(SolutionDir)\..\submodules;$(SolutionDir)\..\submodules\CodeBase\thirdparty\pthread;$(SolutionDir)\..\thirdparty\curl\include;$(SolutionDir)\..\thirdparty\mysql\include;$(SolutionDir)\..\thirdparty\pugixml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
