@@ -32,7 +32,7 @@ bool CSensorManager::Init(CMySqlClient * dbConn)
 
 			printf("id %d path %s value %f\n", sensorID, sensorPath.c_str(), value);
 
-			CSensor * sensor = nullptr;
+			CSensor * sensor = NULL;
 			if (true == CArduinoSensor::IsArduinoSensor(sensorPath.c_str()))
 			{
 				sensor = new CArduinoSensor(sensorID, sensorPath, &value);
