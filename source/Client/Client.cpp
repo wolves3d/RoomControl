@@ -74,9 +74,12 @@ CClient::CClient()
 	m_cmdManager.RegisterHandler(new OnSetPinValue());
 
 
+	printf("Trying to open arduino port...\n");
 	CSerialPort * arduinoPort = new CSerialPort;
 	if (true == arduinoPort->Open(ARDUINO_PORT))
 	{
+		printf("Arduino port success\n");
+
 		System::SleepMS(2000); // time to init microcontroller
 		m_arduinoCmdManager.GetPacketManager()->AddClent(arduinoPort);
 
@@ -89,6 +92,10 @@ CClient::CClient()
 
 		
 		m_arduinoCmdManager.SendCommand(arduinoPort, new ArduinoEnumerateOneWire);
+	}
+	else
+	{
+		printf("Arduino port FAILED\n");
 	}
 }
 
