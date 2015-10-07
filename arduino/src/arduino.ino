@@ -31,9 +31,10 @@ void setup(void)
 	Serial.begin(9600);
 	randomSeed(0);
 
-	pinWatchDog.SleepTime(20); // 1000/20 = 50 analog-reads per second
-	/*
+	pinWatchDog.SleepTime(500); // 1000/500 = 2 analog-reads per second
 	pinWatchDog.WatchFor(0);
+
+	/*
 	pinWatchDog.WatchFor(1);
 	pinWatchDog.WatchFor(2);
 	pinWatchDog.WatchFor(3);
@@ -56,6 +57,7 @@ void loop()
 {
 	commandManager.OnLoop();
 	stateBlink.OnUpdate();
+	pinWatchDog.OnUpdate();
 	
 
 

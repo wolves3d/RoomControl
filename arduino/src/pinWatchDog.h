@@ -116,15 +116,14 @@ public:
 				if (0 != pinFlags[i])
 				{
 					const uint16_t currentPinValue = analogRead(i);
-					/*
 					if (currentPinValue != pinValues[i])
 					{
 						pinValues[i] = currentPinValue;
 					
-						int arguments[2] = { i, currentPinValue };
-						SerialCommand::Send(RSP_ON_PIN_CHANGED, (byte *)arguments, 2 * sizeof(int));
+						//int arguments[2] = { i, currentPinValue };
+						SerialCommand::Send(RSP_PING, 0, (byte *)&currentPinValue, 2);
+						//SerialCommand::Send(RSP_ON_PIN_CHANGED, (byte *)arguments, 2 * sizeof(int));
 					}
-					*/
 				}
 			}
 		}
