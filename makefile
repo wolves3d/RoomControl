@@ -55,6 +55,10 @@ LOBJECTS := $(subst ..,__,$(LOBJECTST))
 
 all: show_vars client
 
+clean:
+	rm -rf $(OBJ_TARGET_DIR)
+	rm -rf $(BIN_DIR)
+
 show_vars:
 	@$(call dump-vars)
 	
