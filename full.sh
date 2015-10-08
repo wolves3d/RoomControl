@@ -20,7 +20,7 @@ echo "\n"
 
 # build client -----------------------------------------------------------------
 echo "Building client"
-cd source
+
 $USER make clean
 #$USER make > build.log
 $USER make
