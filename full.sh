@@ -9,7 +9,6 @@ clear
 # pull sources -----------------------------------------------------------------
 echo "Updating sources"
 
-cd ..
 $USER git pull
 $USER git submodule update --recursive --init
 if [ $? -ne 0 ]; then
