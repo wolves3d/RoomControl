@@ -13,7 +13,7 @@
 
 #else
 
-#define ARDUINO_PORT "/dev/ttyUSB0"
+#define ARDUINO_PORT "/dev/ttyUSB_arduino"
 
 #endif
 
