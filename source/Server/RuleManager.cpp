@@ -87,21 +87,30 @@ void CRuleManager::InitRules()
 			uint sensorB_ID = row.GetInt(4);
 			uint isInverted = row.GetInt(5);
 			uint targetSensorID = row.GetInt(6);
+			int isEnabled = row.GetInt(7);
 
 			ILogicOp * logicOp = GetLogicOpWithID(logicOpID);
 			ISensor * sensorA = g_sensorMgr->GetSensor(sensorA_ID);
 			ISensor * sensorB = g_sensorMgr->GetSensor(sensorB_ID);
 
-			printf("Rule id:%d (sensorA:%d) %s (sensorB:%d)\n",
-				ruleID, sensorA_ID, logicOp->GetName(), sensorB_ID);
-
-			CRule * rule = new CRule(ruleID, targetSensorID);
-			rule->SetInverted(0 != isInverted);
-			rule->SetOperands(sensorA, logicOp, sensorB);
-
-			if (false == AddRule(rule))
+			if (0 == isEnabled)
 			{
-				DEL(rule);
+				printf("Rule id:%d (sensorA:%d) %s (sensorB:%d) DISABLED\n",
+					ruleID, sensorA_ID, logicOp->GetName(), sensorB_ID);
+			}
+			else
+			{
+				printf("Rule id:%d (sensorA:%d) %s (sensorB:%d)\n",
+					ruleID, sensorA_ID, logicOp->GetName(), sensorB_ID);
+
+				CRule * rule = new CRule(ruleID, targetSensorID);
+				rule->SetInverted(0 != isInverted);
+				rule->SetOperands(sensorA, logicOp, sensorB);
+
+				if (false == AddRule(rule))
+				{
+					DEL(rule);
+				}
 			}
 		}
 	}
