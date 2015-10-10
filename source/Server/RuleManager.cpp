@@ -82,12 +82,12 @@ void CRuleManager::InitRules()
 		while (true == result.GetNextRow(&row))
 		{
 			uint ruleID = row.GetInt(0);
-			uint sensorA_ID = row.GetInt(2);
-			uint logicOpID = row.GetInt(3);
-			uint sensorB_ID = row.GetInt(4);
-			uint isInverted = row.GetInt(5);
-			uint targetSensorID = row.GetInt(6);
-			int isEnabled = row.GetInt(7);
+			uint sensorA_ID = row.GetInt(1);
+			uint logicOpID = row.GetInt(2);
+			uint sensorB_ID = row.GetInt(3);
+			uint isInverted = row.GetInt(4);
+			uint targetSensorID = row.GetInt(5);
+			int isEnabled = row.GetInt(6);
 
 			ILogicOp * logicOp = GetLogicOpWithID(logicOpID);
 			ISensor * sensorA = g_sensorMgr->GetSensor(sensorA_ID);
