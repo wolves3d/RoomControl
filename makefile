@@ -10,6 +10,8 @@ source/Server/*.c* \
 thirdparty/pugixml/*.c* \
 submodules/CodeBase/network/**/*.c*
 
+CLIENT_SRC_FILES := submodules/CodeBase/LogFacility.cpp
+
 #Client source dirs
 #CLIENT_SRC_DIRS := . Arduino Client Server
 #CLIENT_SRC_DIRS := .
@@ -18,7 +20,7 @@ CLIENT_INC_DIRS := source submodules thirdparty/curl/include thirdparty/mysql/in
 # Add source path prefix
 CLIENT_INC_DIRS := $(addprefix -I, $(CLIENT_INC_DIRS))
 # Search *.c* files
-CLIENT_SRC := $(wildcard $(CLIENT_SRC_DIRS))
+CLIENT_SRC := $(wildcard $(CLIENT_SRC_DIRS)) $(CLIENT_SRC_FILES)
 #CLIENT_SRC := $(subst //.//,//,$(CLIENT_SRC))
 
 
