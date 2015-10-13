@@ -6,7 +6,7 @@ void OnClientInfo::OnResponse(const byte * data, uint size, IAbstractSocket * so
 {
 	if (8 != size)
 	{
-		DEBUG_MSG("invalid buffer size!");
+		LOG_ERROR("invalid buffer size!");
 		return;
 	}
 

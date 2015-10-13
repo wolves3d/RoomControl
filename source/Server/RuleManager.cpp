@@ -76,7 +76,7 @@ void CRuleManager::InitRules()
 	if (true == db->Query(&result, query))
 	{
 		// output table name
-		printf("Logic rules list (DB)\n");
+		LOG_INFO("Logic rules list (DB)");
 
 		CMySqlRow row;
 		while (true == result.GetNextRow(&row))
@@ -95,12 +95,12 @@ void CRuleManager::InitRules()
 
 			if (0 == isEnabled)
 			{
-				printf("Rule id:%d (sensorA:%d) %s (sensorB:%d) DISABLED\n",
+				LOG_INFO("\tRule id:%d (sensorA:%d) %s (sensorB:%d) DISABLED",
 					ruleID, sensorA_ID, logicOp->GetName(), sensorB_ID);
 			}
 			else
 			{
-				printf("Rule id:%d (sensorA:%d) %s (sensorB:%d)\n",
+				LOG_INFO("\tRule id:%d (sensorA:%d) %s (sensorB:%d)",
 					ruleID, sensorA_ID, logicOp->GetName(), sensorB_ID);
 
 				CRule * rule = new CRule(ruleID, targetSensorID);

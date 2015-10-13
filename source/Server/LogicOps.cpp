@@ -73,7 +73,7 @@ void CRuleManager::InitLogicOps()
 	if (true == db->Query(&result, query))
 	{
 		// output table name
-		printf("Logic operators list (DB)\n");
+		LOG_INFO("Logic operators list (DB)");
 
 		CMySqlRow row;
 		while (true == result.GetNextRow(&row))
@@ -86,12 +86,12 @@ void CRuleManager::InitLogicOps()
 			ILogicOp * logicOp = GetLogicOpWithName(opertaorName.c_str());
 			if (NULL != logicOp)
 			{
-				printf("id %d name %s\n", opertaorID, opertaorName.c_str());
+				LOG_INFO("\tid %d name %s", opertaorID, opertaorName.c_str());
 				AddLogicOpWithID(opertaorID, logicOp);
 			}
 			else
 			{
-				printf("id %d name %s (NO HANDLER)\n", opertaorID, opertaorName.c_str());
+				LOG_INFO("\tid %d name %s (NO HANDLER)", opertaorID, opertaorName.c_str());
 			}
 		}
 	}

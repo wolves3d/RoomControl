@@ -15,8 +15,16 @@ CServer::CServer(int port)
 	m_cmdMgr.RegisterHandler(new OnClientInfo());
 	m_cmdMgr.RegisterHandler(new OnClientSensorUpdate());
 
-	printf("Connecting to DB...");
-	m_dataBase.Connect("192.168.0.1", "root", "trust#1sql", "smart_home");
+	LOG_INFO("Connecting to DB...");
+	if (true == m_dataBase.Connect("192.168.0.1", "root", "trust#1sql", "smart_home"))
+	{
+		LOG_INFO("OK");
+	}
+	else
+	{
+		LOG_INFO("FAILED");
+	}
+
 	m_sensorManager.Init(&m_dataBase);
 	m_ruleManager.Init();
 }
@@ -29,7 +37,7 @@ void CServer::AddArduinoRecord(const byte * UID, size_t uidSize, IAbstractSocket
 	ArduinoSocketMap::const_iterator it = m_arduinoSockets.find(uidString);
 	if (m_arduinoSockets.end() != it)
 	{
-		DEBUG_MSG("arduino UID duplicate");
+		LOG_ERROR("arduino UID duplicate");
 	}
 
 	m_arduinoSockets[uidString] = socket;

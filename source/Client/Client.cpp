@@ -45,7 +45,7 @@ struct ArduinoDeviceEnumeration : ICallback
 
 	void OnEnumerationDone()
 	{
-		printf("client: all arduino devices enumerated!\n");
+		LOG_INFO("client: all arduino devices enumerated!");
 
 // 		OnClientGUIDReady cmd;
 // 		CCommandManager * mgr = g_client->GetServer();
@@ -74,11 +74,11 @@ CClient::CClient()
 	m_cmdManager.RegisterHandler(new OnSetPinValue());
 
 
-	printf("Trying to open arduino port...\n");
+	LOG_INFO("Trying to open arduino port...");
 	CSerialPort * arduinoPort = new CSerialPort;
 	if (true == arduinoPort->Open(ARDUINO_PORT))
 	{
-		printf("Arduino port success\n");
+		LOG_INFO("Arduino port success");
 
 		System::SleepMS(2000); // time to init microcontroller
 		m_arduinoCmdManager.GetPacketManager()->AddClent(arduinoPort);
@@ -95,7 +95,7 @@ CClient::CClient()
 	}
 	else
 	{
-		printf("Arduino port FAILED\n");
+		LOG_INFO("Arduino port FAILED");
 	}
 }
 
@@ -173,7 +173,7 @@ void CClient::OnEverySecondUpdate()
 	m_nextUpdate = GetTickCount() + 1000;
 
 	//return;
-	printf("OnEverySecondUpdate\n");
+	LOG_INFO("OnEverySecondUpdate");
 
 	ArduinoVector deviceList = m_arduinoMgr.BuildDeviceList();
 	for (uint i = 0; i < deviceList.size(); ++i)

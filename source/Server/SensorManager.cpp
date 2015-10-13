@@ -21,7 +21,7 @@ bool CSensorManager::Init(CMySqlClient * dbConn)
 	if (true == m_dataBase->Query(&result, query))
 	{
 		// output table name
-		printf("Sensors list (DB)\n");
+		LOG_INFO("Sensors list (DB)");
 
 		CMySqlRow row;
 		while (true == result.GetNextRow(&row))
@@ -30,7 +30,7 @@ bool CSensorManager::Init(CMySqlClient * dbConn)
 			string sensorPath = row.GetString(1);
 			float value = row.GetFloat(4);
 
-			printf("id %d path %s value %f\n", sensorID, sensorPath.c_str(), value);
+			LOG_INFO("\tid %d path %s value %f", sensorID, sensorPath.c_str(), value);
 
 			CSensor * sensor = NULL;
 			if (true == CArduinoSensor::IsArduinoSensor(sensorPath.c_str()))
@@ -126,7 +126,7 @@ bool CSensorManager::UpdateSensor(uint id, float newValue, bool isSetter, bool f
 
 			m_dataBase->Query(NULL, query.c_str());
 		
-			printf("Sensor (id:%llu, path:%s) value updated to %f\n", (unsigned long long)sensor->GetID(), sensor->GetPath(), newValue);
+			LOG_INFO("Sensor (id:%llu, path:%s) value updated to %f", (unsigned long long)sensor->GetID(), sensor->GetPath(), newValue);
 		}
 	}
 

@@ -34,7 +34,7 @@ class ArduinoReadEEPROM : public INetCommand
 		{
 			m_offset = 0;
 			m_byteCount = 0;
-			DEBUG_MSG("Wrong params");
+			LOG_ERROR("Wrong params");
 		}
 	}
 

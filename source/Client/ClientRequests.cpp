@@ -7,7 +7,7 @@ uint SendClientInfo::OnFillData(void * buffer, uint maxByteCount)
 	const uint bytesWritten = ArduinoDevice::UID_SIZE;
 	if (bytesWritten > maxByteCount)
 	{
-		DEBUG_MSG("Target buffer too small");
+		LOG_ERROR("Target buffer too small");
 		return 0;
 	}
 

@@ -13,7 +13,6 @@ void System::SleepMS(uint ms)
 
 string u_string_format(const char *fmt, ...)
 {
-
 	char ret[4 * 4096 + 1] = { 0 };
 	va_list ap;
 
@@ -27,13 +26,21 @@ string u_string_format(const char *fmt, ...)
 }
 
 
-string HexStringFromBytes(const byte * buffer, size_t size)
+string HexStringFromBytes(const byte * buffer, size_t size, bool spaceSeparator)
 {
 	string resultString;
 
 	if (size > 0)
 	{
-		const size_t memSize = (2 * size) + 1; // plus one for null term
+		const uint charPerByte = (false == spaceSeparator)
+			? 2
+			: 3;
+
+		const char *fmt = (false == spaceSeparator)
+			? "%02X"
+			: "%02X ";
+
+		const size_t memSize = (charPerByte * size) + 1; // plus one for null term
 		char * destBuffer = NEW char[memSize];
 
 		char * ptr = destBuffer;
@@ -41,9 +48,10 @@ string HexStringFromBytes(const byte * buffer, size_t size)
 		for (size_t i = 0; i < size; ++i)
 		{
 			unsigned int byteValue = (byte)buffer[i];
-			sprintf(ptr, "%02X", byteValue);
 
-			ptr += 2;
+			sprintf(ptr, fmt, byteValue);
+
+			ptr += charPerByte;
 		}
 
 		resultString = destBuffer;

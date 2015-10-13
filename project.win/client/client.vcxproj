@@ -29,6 +29,7 @@
     <ClInclude Include="..\..\source\Server\ServerRequests.h" />
     <ClInclude Include="..\..\source\Server\ServerResponses.h" />
     <ClInclude Include="..\..\submodules\CodeBase\CodeBase.h" />
+    <ClInclude Include="..\..\submodules\CodeBase\LogFacility.h" />
     <ClInclude Include="..\..\submodules\CodeBase\network\AbstractSocket.h" />
     <ClInclude Include="..\..\submodules\CodeBase\network\serial_socket\serialport.h" />
     <ClInclude Include="..\..\submodules\CodeBase\network\tcp_socket\tcp_socket.h" />
@@ -59,6 +60,9 @@
     <ClCompile Include="..\..\source\Server\Server.cpp" />
     <ClCompile Include="..\..\source\Server\ServerRequests.cpp" />
     <ClCompile Include="..\..\source\Server\ServerResponses.cpp" />
+    <ClCompile Include="..\..\submodules\CodeBase\LogFacility.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\..\submodules\CodeBase\network\serial_socket\serialport_win32.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>

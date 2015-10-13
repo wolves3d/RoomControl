@@ -15,7 +15,7 @@ void ArduinoDevice::ClearOneWireDeviceList()
 	m_isOneWireEnumerated = false;
 	m_owDeviceList.clear();
 
-	printf("ClearOneWireDeviceList\n");
+	LOG_INFO("ClearOneWireDeviceList");
 }
 
 
@@ -34,7 +34,6 @@ const OneWireAddr & ArduinoDevice::GetOneWireDevice(uint device)
 void ArduinoDevice::OnOneWireEnumerated()
 {
 	m_isOneWireEnumerated = true;
-	printf("RSP: 1wire enumerated!\n");
 }
 
 
@@ -46,7 +45,7 @@ void ArduinoDevice::SetUID(const byte *data, uint dataSize)
 	}
 	else
 	{
-		DEBUG_MSG("invalid UID data");
+		LOG_ERROR("invalid UID data");
 	}
 }
 

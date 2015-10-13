@@ -19,7 +19,7 @@ class PingResponse : public IResponseHandler
 
 		//workTime = (GetTickCount() - ttt);
 
-		printf("ping %d sec\n", workTime);
+		LOG_INFO("ping %d sec", workTime);
 	}
 };
 
@@ -33,8 +33,8 @@ class OneWireEnumBegin : public IResponseHandler
 		if (NULL == device)
 			return;
 
+		LOG_INFO_TAG(ARDUINO_TAG, "Request 1wire enumeration");
 		device->ClearOneWireDeviceList();
-		printf("1wire enum started!\n");
 	}
 };
 
@@ -48,11 +48,9 @@ class OneWireRomFound : public IResponseHandler
 		if (NULL == device)
 			return;
 
-		printf("RSP: 1wire rom found addr ");
-		for (uint i = 0; i < OneWireAddr::ADDR_LEN; ++i)
-			printf("%02X ", data[i]);
-		printf("\n");
-
+		const string addrString = HexStringFromBytes(data, OneWireAddr::ADDR_LEN, true);
+		LOG_INFO_TAG(ARDUINO_TAG, "\tResponse 1wire ROM found:%s", addrString.c_str());
+		
 		device->AddOneWireDevice(OneWireAddr((const byte *)data));
 	}
 };
@@ -68,7 +66,7 @@ class OneWireEnumEnd : public IResponseHandler
 			return;
 
 		device->OnOneWireEnumerated();
-		printf("1wire enumerated!\n");
+		LOG_INFO_TAG(ARDUINO_TAG, "Response 1wire enumerated");
 	}
 };
 
@@ -76,7 +74,7 @@ class ArduinoInvalidRequest : public IResponseHandler
 {
 	HANDLER_HEADER(OneWireEnumEnd, RSP_INVALID_REQUEST)
 	{
-		printf("ardunio: invalid request!\n");
+		LOG_ERROR("ardunio: invalid request!");
 	}
 };
 
@@ -85,6 +83,6 @@ class WriteEEPROM : public IResponseHandler
 {
 	HANDLER_HEADER(WriteEEPROM, RSP_WRITE_EEPROM)
 	{
-		printf("RSP: write EEPROM %d bytes OK\n", data[0]);
+		LOG_INFO("RSP: write EEPROM %d bytes OK", data[0]);
 	}
 };

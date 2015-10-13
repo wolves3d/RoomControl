@@ -10,10 +10,12 @@
 // To avoid that behaviour, the port name should be passed as \\.\COMx (replacing x with the port number we want to test)
 // Link: support.microsoft.com/kb/115831
 #define ARDUINO_PORT "\\\\.\\COM7"
+#define LOG_PATH "."
 
 #else
 
 #define ARDUINO_PORT "/dev/ttyUSB_arduino"
+#define LOG_PATH "/var/log/RoomControl"
 
 #endif
 
@@ -28,6 +30,6 @@ struct System
 
 
 string u_string_format(const char *fmt, ...);
-string HexStringFromBytes(const byte * buffer, size_t size);
+string HexStringFromBytes(const byte * buffer, size_t size, bool spaceSeparator = false);
 
 #endif // #ifndef __pch_h_included__

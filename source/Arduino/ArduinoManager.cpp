@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "CodeBase/network/transport/CommandManager.h"
-#include "ArduinoManager.h"
-#include "CommandHandlers.h"
+#include "Client/Client.h"
+//#include "CommandHandlers.h"
 
 
 ArduinoManager * g_arduinoManager = NULL;

@@ -114,6 +114,9 @@
     <ClInclude Include="..\..\thirdparty\pugixml\pugixml.hpp">
       <Filter>Source\thirdparty\pugixml</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\submodules\CodeBase\LogFacility.h">
+      <Filter>Source\CodeBase</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\submodules\CodeBase\network\tcp_socket\tcp_socket.cpp">
@@ -175,6 +178,9 @@
     </ClCompile>
     <ClCompile Include="..\..\thirdparty\pugixml\pugixml.cpp">
       <Filter>Source\thirdparty\pugixml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\submodules\CodeBase\LogFacility.cpp">
+      <Filter>Source\CodeBase</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

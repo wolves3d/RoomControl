@@ -32,13 +32,13 @@ class GetClientGUID : public INetCommand
 
 	virtual uint OnFillData(void * buffer, uint maxByteCount)
 	{
-		printf("server: request client GUID\n");
+		LOG_INFO("server: request client GUID");
 		return 0;
 	}
 
 	virtual void OnResponse(const byte * data, uint size, IAbstractSocket * socket, CCommandManager * mgr)
 	{
-		printf("server: response - got client GUID\n");
+		LOG_INFO("server: response - got client GUID");
 	}
 };
 
@@ -57,7 +57,7 @@ class CServer : public INetListenerDelegate
 		char buf[maxLen];
 		inet_ntop(AF_INET, &socket->m_addr.sin_addr, buf, maxLen);
 
-		printf("accepted connection from %s, port %d\n",
+		LOG_INFO("accepted connection from %s, port %d",
 			buf,
 			htons(socket->m_addr.sin_port));
 

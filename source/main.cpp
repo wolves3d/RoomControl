@@ -89,11 +89,15 @@ void LogDB(const char * sensorID, float sensorT)
 
 int main()
 {
+	const string logFileName = u_string_format("%s/%s.log", LOG_PATH, CTextTime::Now().c_str());
+	CLog *logFacility = CLog::Instance();	
+	logFacility->LogFile(logFileName.c_str());
+	
 	CServer server(SERVER_PORT);
 
 	// -------------------------------------------------------------------------
 
-	printf("--- Client ---\n");
+	LOG_INFO("\n--- Client ---");
 	CClient client;
 	client.Init("192.168.0.1", SERVER_PORT);
 

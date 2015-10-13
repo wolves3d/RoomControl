@@ -7,6 +7,10 @@
 #include "CodeBase/network/serial_socket/serialport.h"
 #include "CodeBase/network/tcp_socket/tcp_socket.h"
 
+
+#define ARDUINO_TAG "ARDUINO"
+
+
 #include "Arduino/ArduinoManager.h"
 #include "Arduino/CommandHandlers.h"
 
@@ -19,6 +23,7 @@
 #include "ClientResponses.h"
 
 #include "pugixml.hpp"
+#include "CodeBase/LogFacility.h"
 
 
 #define CLIENT_CONFIG_FILE "client_config.xml"

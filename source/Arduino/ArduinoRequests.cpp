@@ -12,19 +12,20 @@ uint ArduinoSetPinValue::OnFillData(void * buffer, uint maxByteCount)
 
 	DEBUG_ASSERT('D' == m_pinPrefix); // Analog not supported
 
+	LOG_INFO_TAG(ARDUINO_TAG, "Request pin state change (pin:%c%d value:%d", m_pinPrefix, m_pin, m_pinValue);
 	return 3;
 }
 
 
 void ArduinoSetPinValue::OnResponse(const byte * data, uint size, IAbstractSocket * socket, CCommandManager * mgr)
 {
-	printf("RSP: SetPinValue\n");
+	LOG_INFO_TAG(ARDUINO_TAG, "Response pin state changed (pin:%c%d value:%d", m_pinPrefix, m_pin, m_pinValue);
 }
 
 
 uint ArduinoReadEEPROM::OnFillData(void * buffer, uint maxByteCount)
 {
-	printf("REQUEST: EEPROM OnFillData\n");
+	LOG_INFO_TAG(ARDUINO_TAG, "Client request read EEPROM (offset:%d, size:%d)", m_offset, m_byteCount);
 
 	byte * buf = (byte *)buffer;
 
@@ -38,16 +39,15 @@ uint ArduinoReadEEPROM::OnFillData(void * buffer, uint maxByteCount)
 void ArduinoReadEEPROM::OnResponse(const byte * data, uint size, IAbstractSocket * socket, CCommandManager * mgr)
 {
 	DEBUG_ASSERT(m_byteCount == size);
-
-	printf("RSP: EEPROM");
+	LOG_INFO_TAG(ARDUINO_TAG, "Read EEPROM response(offset:%d, size:%d)", m_offset, size);
 
 	for (uint i = 0; i < size; ++i)
 	{
 		m_romData[i] = data[i];
-		printf(" %02X", data[i]);
 	}
 
-	printf("\n");
+	const string hexString = HexStringFromBytes(m_romData, size, true);
+	LOG_INFO_TAG(ARDUINO_TAG, "Read EEPROM data: %s", hexString.c_str());
 }
 
 
@@ -104,11 +104,11 @@ void ArduinoReadOneWire::OnResponse(const byte * dat, uint size, IAbstractSocket
 		break;
 
 		default:
-		printf("UNKNOWN CHIP ID!");
+		LOG_ERROR("UNKNOWN CHIP ID!");
 	}
 
 	float celsius = (float)raw / 16.f;
-	printf("Temperature = %02.02fC / %02.02fF\n", celsius, (32 + (1.8f * celsius)));
+	LOG_INFO("Temperature = %02.02fC / %02.02fF\n", celsius, (32 + (1.8f * celsius)));
 
 	m_probeValue = celsius;
 }
