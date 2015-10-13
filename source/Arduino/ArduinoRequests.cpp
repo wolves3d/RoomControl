@@ -54,6 +54,10 @@ void ArduinoReadEEPROM::OnResponse(const byte * data, uint size, IAbstractSocket
 uint ArduinoReadOneWire::OnFillData(void * buffer, uint maxByteCount)
 {
 	memcpy(buffer, m_addr.Address(), m_addr.ADDR_LEN);
+
+	const string hexString = HexStringFromBytes((byte*)buffer, m_addr.ADDR_LEN, true);
+	LOG_INFO_TAG(ARDUINO_TAG, "Request read 1wire ROM:%s", hexString.c_str());
+
 	return m_addr.ADDR_LEN;
 }
 
@@ -108,7 +112,7 @@ void ArduinoReadOneWire::OnResponse(const byte * dat, uint size, IAbstractSocket
 	}
 
 	float celsius = (float)raw / 16.f;
-	LOG_INFO("Temperature = %02.02fC / %02.02fF\n", celsius, (32 + (1.8f * celsius)));
+	LOG_INFO_TAG(ARDUINO_TAG, "Response from 1wire ROM: Temp = %02.02fC / %02.02fF", celsius, (32 + (1.8f * celsius)));
 
 	m_probeValue = celsius;
 }
