@@ -15,7 +15,7 @@ class PingResponse : public IResponseHandler
 		}
 
 		DEBUG_ASSERT(2 == size);
-		int workTime = *((short *)data);
+		//int workTime = *((short *)data);
 
 		//workTime = (GetTickCount() - ttt);
 

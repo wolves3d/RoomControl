@@ -1,6 +1,13 @@
 #include "pch.h"
 #include "Server.h"
 
+#ifndef WIN32
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <string.h>
+#include <stdio.h>
+#endif // #ifndef WIN32
+
 
 CServer * g_server = NULL;
 
