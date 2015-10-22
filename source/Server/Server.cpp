@@ -35,6 +35,8 @@ CServer::CServer(int port)
 
 	m_sensorManager.Init(&m_dataBase);
 	m_ruleManager.Init();
+
+	OpenPipe();
 }
 
 
