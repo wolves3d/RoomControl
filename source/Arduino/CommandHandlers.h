@@ -19,7 +19,7 @@ class PingResponse : public IResponseHandler
 
 		//workTime = (GetTickCount() - ttt);
 
-		LOG_INFO("ping %d sec", workTime);
+		//LOG_INFO("ping %d sec", workTime);
 	}
 };
 
@@ -33,7 +33,7 @@ class OneWireEnumBegin : public IResponseHandler
 		if (NULL == device)
 			return;
 
-		LOG_INFO_TAG(ARDUINO_TAG, "Request 1wire enumeration");
+		LOG_INFO_TAG(ARDUINO_TAG, "Response 1wire enumeration started");
 		device->ClearOneWireDeviceList();
 	}
 };

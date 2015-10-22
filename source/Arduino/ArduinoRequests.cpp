@@ -12,14 +12,14 @@ uint ArduinoSetPinValue::OnFillData(void * buffer, uint maxByteCount)
 
 	DEBUG_ASSERT('D' == m_pinPrefix); // Analog not supported
 
-	LOG_INFO_TAG(ARDUINO_TAG, "Request pin state change (pin:%c%d value:%d", m_pinPrefix, m_pin, m_pinValue);
+	LOG_INFO_TAG(ARDUINO_TAG, "Request pin state change (pin:%c%d value:%d)", m_pinPrefix, m_pin, m_pinValue);
 	return 3;
 }
 
 
 void ArduinoSetPinValue::OnResponse(const byte * data, uint size, IAbstractSocket * socket, CCommandManager * mgr)
 {
-	LOG_INFO_TAG(ARDUINO_TAG, "Response pin state changed (pin:%c%d value:%d", m_pinPrefix, m_pin, m_pinValue);
+	LOG_INFO_TAG(ARDUINO_TAG, "Response pin state changed (pin:%c%d value:%d)", m_pinPrefix, m_pin, m_pinValue);
 }
 
 
