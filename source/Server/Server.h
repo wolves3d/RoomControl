@@ -72,14 +72,7 @@ public:
 
 	CServer(int port);
 
-	void OnUpdate()
-	{
-		m_sensorManager.UpdateSystemSensors();
-		m_ruleManager.OnUpdate();
-
-		m_cmdMgr.OnUpdate();
-		m_netListener.OnUpdate();
-	}
+	void OnUpdate();
 
 	CMySqlClient * GetDB() { return &m_dataBase; }
 	CCommandManager * GetCommandManager() { return &m_cmdMgr; }
@@ -93,6 +86,10 @@ public:
 	IAbstractSocket * GetArduinoClient(const string &arduinoUID);
 
 private:
+
+	void OpenPipe();
+	void UpdatePipe();
+	int m_pipeDesc;
 
 	typedef map <string, IAbstractSocket *> ArduinoSocketMap;
 	ArduinoSocketMap m_arduinoSockets;

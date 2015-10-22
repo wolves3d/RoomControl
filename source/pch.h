@@ -16,6 +16,7 @@
 
 #define ARDUINO_PORT "/dev/ttyUSB_arduino"
 #define LOG_PATH "/var/log/RoomControl"
+#define PIPE_NAME "/tmp/my_named_pipe"
 
 #endif
 

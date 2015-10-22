@@ -8,6 +8,7 @@ CServer * g_server = NULL;
 CServer::CServer(int port)
 	: m_netListener(this)
 	, m_cmdMgr(new CNetPacket, false)
+	, m_pipeDesc(0)
 {
 	g_server = this;
 	m_netListener.Init(port);
@@ -101,4 +102,57 @@ IAbstractSocket * CServer::GetArduinoClient(const string &arduinoUID)
 	}
 
 	return NULL;
+}
+
+
+void CServer::OnUpdate()
+{
+	m_sensorManager.UpdateSystemSensors();
+	m_ruleManager.OnUpdate();
+
+	m_cmdMgr.OnUpdate();
+	m_netListener.OnUpdate();
+
+	UpdatePipe();
+}
+
+
+void CServer::OpenPipe()
+{
+
+#ifndef WIN32
+	LOG_INFO("Creating pipe...");
+	if (0 != mkfifo(PIPE_NAME, 0777))
+	{
+		LOG_INFO("FAILED");
+	}
+	else
+	{
+		LOG_INFO("Pipe %s created", PIPE_NAME);
+
+		m_pipeDesc = open(PIPE_NAME, O_RDONLY | O_NONBLOCK);
+//		if (m_pipeDesc <= 0)
+	}
+#endif // #ifndef WIN32
+
+}
+
+
+void CServer::UpdatePipe()
+{
+#ifndef WIN32
+
+	const uint bufLen = 32;
+	byte buffer[bufLen];
+
+	if (m_pipeDesc > 0)
+	{
+		memset(buffer, 0, bufLen);
+		if (read(m_pipeDesc, buffer, bufLen) > 0)
+		{
+			LOG_INFO("Got read from pipe! :)", PIPE_NAME);
+		}
+	}
+
+#endif // #ifndef WIN32
 }
