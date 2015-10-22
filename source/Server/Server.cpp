@@ -138,8 +138,10 @@ void CServer::OpenPipe()
 	else
 	{
 		LOG_INFO("Pipe %s created", PIPE_NAME);
+	}
 
-		m_pipeDesc = open(PIPE_NAME, O_RDONLY | O_NONBLOCK);
+	// anyway try to open
+	m_pipeDesc = open(PIPE_NAME, O_RDONLY | O_NONBLOCK);
 //		if (m_pipeDesc <= 0)
 	}
 #endif // #ifndef WIN32
