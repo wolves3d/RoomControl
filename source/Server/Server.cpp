@@ -162,8 +162,19 @@ void CServer::UpdatePipe()
 		if (read(m_pipeDesc, buffer, bufLen) > 0)
 		{
 			LOG_INFO("Got read from pipe! :)", PIPE_NAME);
+			Restart();
 		}
 	}
 
 #endif // #ifndef WIN32
+}
+
+
+void CServer::Restart()
+{
+	m_ruleManager.Release();
+	m_sensorManager.Release();
+
+	m_sensorManager.Init(&m_dataBase);
+	m_ruleManager.Init();
 }

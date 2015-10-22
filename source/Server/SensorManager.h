@@ -77,6 +77,8 @@ public:
 
 	CSensorManager();
 	bool Init(CMySqlClient * dbConn);
+	void Release();
+
 	void UpdateSystemSensors();
 	bool UpdateSensor(uint id, float newValue, bool isSetter, bool forceUpdateClient = false);
 

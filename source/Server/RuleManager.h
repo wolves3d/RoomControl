@@ -42,6 +42,7 @@ class CRuleManager
 {
 public:
 	void Init();
+	void Release();
 	void OnUpdate();
 
 private:
@@ -57,8 +58,11 @@ private:
 	bool AddRule(CRule * rule);
 	CRule * GetRuleWithID(size_t ruleID);
 
-	map <string, ILogicOp *> m_logicOpMapWithName;
+	typedef map <string, ILogicOp *> LogicOpNameMap;
+	LogicOpNameMap m_logicOpMapWithName;
+
 	map <size_t, ILogicOp *> m_logicOpMapWithID;
 
-	map <size_t, CRule *> m_ruleMap;
+	typedef map <size_t, CRule *> RuleMap;
+	RuleMap m_ruleMap;
 };

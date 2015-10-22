@@ -87,6 +87,7 @@ public:
 
 private:
 
+	void Restart();
 	void OpenPipe();
 	void UpdatePipe();
 	int m_pipeDesc;

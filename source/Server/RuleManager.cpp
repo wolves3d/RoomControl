@@ -149,7 +149,7 @@ bool CRuleManager::AddRule(CRule * rule)
 void CRuleManager::OnUpdate()
 {
 	// FIXME: bruteforce, change to (on_sensor_value_changed update affacted rules)
-	map <size_t, CRule *>::const_iterator it = m_ruleMap.begin();
+	RuleMap::const_iterator it = m_ruleMap.begin();
 
 	while (m_ruleMap.end() != it)
 	{
@@ -162,4 +162,29 @@ void CRuleManager::OnUpdate()
 
 		++it;
 	}
+}
+
+
+void CRuleManager::Release()
+{
+	LOG_INFO("Release rule manager");
+
+	// clear rules
+
+	for (RuleMap::const_iterator it = m_ruleMap.begin(); m_ruleMap.end() != it; ++it)
+	{
+		CRule * rule = (it->second);
+		DEL(rule);
+	}
+	m_ruleMap.clear();
+
+	// clear logic
+
+	for (LogicOpNameMap::const_iterator it = m_logicOpMapWithName.begin(); m_logicOpMapWithName.end() != it; ++it)
+	{
+		ILogicOp * logicOp = (it->second);
+		DEL(logicOp);
+	}
+	m_logicOpMapWithName.clear();
+	m_logicOpMapWithID.clear();
 }

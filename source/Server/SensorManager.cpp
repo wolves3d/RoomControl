@@ -60,6 +60,18 @@ bool CSensorManager::Init(CMySqlClient * dbConn)
 }
 
 
+void CSensorManager::Release()
+{
+	LOG_INFO("release sensors");
+	for (SensorMap::const_iterator it = m_sensorMap.begin(); m_sensorMap.end() != it; ++it)
+	{
+		ISensor * sensor = (it->second);
+		DEL(sensor);
+	}
+	m_sensorMap.clear();
+}
+
+
 CSensor * CSensorManager::GetSensor(uint id)
 {
 	SensorMap::iterator it = m_sensorMap.find(id);
