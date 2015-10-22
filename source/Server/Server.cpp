@@ -143,7 +143,7 @@ void CServer::OpenPipe()
 	// anyway try to open
 	m_pipeDesc = open(PIPE_NAME, O_RDONLY | O_NONBLOCK);
 //		if (m_pipeDesc <= 0)
-	}
+	
 #endif // #ifndef WIN32
 
 }
